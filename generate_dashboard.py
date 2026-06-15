@@ -48,7 +48,7 @@ def generate_html():
     SELECT match_number, match_date, group_name, home_team, away_team, 
            expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away, 
            prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert,
-           real_goals_home, real_goals_away
+           real_goals_home, real_goals_away, kickoff_utc
     FROM group_stage_simulations
     ORDER BY match_number ASC
     """)
@@ -72,7 +72,8 @@ def generate_html():
             "pred_away": row[13],
             "is_alert": row[14],
             "real_home": row[15],
-            "real_away": row[16]
+            "real_away": row[16],
+            "kickoff": row[17]
         })
         
     conn.close()
@@ -1394,10 +1395,21 @@ def generate_html():
                             realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>- (Agendado)</strong></div>`;
                         }}
 
+                        let kickoffTimeHtml = '';
+                        if (match.kickoff) {{
+                            try {{
+                                const kickoffDate = new Date(match.kickoff);
+                                const kickoffTimeStr = kickoffDate.toLocaleTimeString('pt-BR', {{ hour: '2-digit', minute: '2-digit' }});
+                                kickoffTimeHtml = ` • 🕒 ${{kickoffTimeStr}}`;
+                            }} catch (e) {{
+                                console.error("Error parsing kickoff date:", e);
+                            }}
+                        }}
+
                         matchesHtml += `
                             <div class="${{cardClass}}">
                                 <div class="match-item-header">
-                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}</span>
+                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}${{kickoffTimeHtml}}</span>
                                     <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
                                 </div>
                                 <div class="match-item-teams">
@@ -1442,10 +1454,21 @@ def generate_html():
                     
                     let matchesHtml = '';
                     alertDateGroups[date].forEach(match => {{
+                        let kickoffTimeHtml = '';
+                        if (match.kickoff) {{
+                            try {{
+                                const kickoffDate = new Date(match.kickoff);
+                                const kickoffTimeStr = kickoffDate.toLocaleTimeString('pt-BR', {{ hour: '2-digit', minute: '2-digit' }});
+                                kickoffTimeHtml = ` • 🕒 ${{kickoffTimeStr}}`;
+                            }} catch (e) {{
+                                console.error("Error parsing kickoff date:", e);
+                            }}
+                        }}
+
                         matchesHtml += `
                             <div class="match-item-card alert-card-glow">
                                 <div class="match-item-header">
-                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}</span>
+                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}${{kickoffTimeHtml}}</span>
                                     <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
                                 </div>
                                 <div class="match-item-teams">

@@ -268,7 +268,8 @@ def main():
         predicted_score_away INTEGER,
         is_over_2_5_alert INTEGER,
         real_goals_home INTEGER,
-        real_goals_away INTEGER
+        real_goals_away INTEGER,
+        kickoff_utc TEXT
     )
     """)
     
@@ -500,6 +501,7 @@ def main():
             if row['stage'] == 'group-stage':
                 match_num = int(row['match_number'])
                 date_str = row['date']
+                kickoff_utc = row['kickoff_utc']
                 group_name = row['group']
                 home = normalize_name(row['home_team'])
                 away = normalize_name(row['away_team'])
@@ -563,6 +565,7 @@ def main():
                 sim_record = {
                     "match_number": match_num,
                     "date": date_str,
+                    "kickoff_utc": kickoff_utc,
                     "group": group_name,
                     "home_team": home,
                     "away_team": away,
@@ -587,13 +590,13 @@ def main():
                     match_number, match_date, group_name, home_team, away_team,
                     expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
                     prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert,
-                    real_goals_home, real_goals_away
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    real_goals_home, real_goals_away, kickoff_utc
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     match_num, date_str, group_name, home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
                     round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], is_alert,
-                    real_h, real_a
+                    real_h, real_a, kickoff_utc
                 ))
                 
     # Save simulations to JSON
