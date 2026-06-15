@@ -6,6 +6,8 @@ on:
       - 'copa_2026_real_results.json'
       - 'data_pipeline.py'
       - 'generate_dashboard.py'
+  schedule:
+    - cron: '0 5,17 * * *'  # Runs twice a day (02:00 BRT and 14:00 BRT)
   workflow_dispatch: # Allows manual run from GitHub Web UI
 
 permissions:
@@ -30,5 +32,5 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html world_cup_2026.db group_stage_simulations.json world_cup_2026_teams.json
+          git add index.html world_cup_2026.db group_stage_simulations.json world_cup_2026_teams.json results.csv
           git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update dashboard and database [skip ci]" && git push)

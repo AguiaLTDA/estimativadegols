@@ -114,6 +114,24 @@ def main():
     fifa_2026 = load_fifa_rankings("fifa_ranking_2026.csv")
     print(f"Loaded FIFA Rankings: {len(fifa_2022)} teams for 2022, {len(fifa_2026)} teams for 2026.")
 
+    # Try downloading the latest results.csv from GitHub
+    results_url = "https://raw.githubusercontent.com/martj42/international_results/master/results.csv"
+    print(f"Downloading latest results.csv from {results_url}...")
+    try:
+        import urllib.request
+        import ssl
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        req = urllib.request.Request(results_url, headers=headers)
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        with urllib.request.urlopen(req, context=ctx, timeout=15) as response:
+            with open("results.csv", "wb") as f:
+                f.write(response.read())
+        print("Downloaded latest results.csv successfully.")
+    except Exception as e:
+        print(f"Could not download latest results.csv (using local file instead): {e}")
+
     # Load results.csv matches
     if not os.path.exists("results.csv"):
         print("Error: results.csv not found.")
