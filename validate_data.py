@@ -125,9 +125,43 @@ def run_validation():
             return False
         print("OK: No NULL values found in matches table.")
         
+        # Verify group_stage_simulations table exists and has 72 rows
+        cursor.execute("SELECT COUNT(*) FROM group_stage_simulations")
+        group_sim_count = cursor.fetchone()[0]
+        if group_sim_count != 72:
+            print(f"FAILED: SQLite group_stage_simulations has {group_sim_count} rows, expected 72.")
+            conn.close()
+            return False
+        print("OK: SQLite group_stage_simulations has exactly 72 rows.")
+        
+        # Verify no NULLs in group_stage_simulations
+        cursor.execute("SELECT COUNT(*) FROM group_stage_simulations WHERE home_team IS NULL OR away_team IS NULL OR expected_goals_home IS NULL")
+        group_nulls = cursor.fetchone()[0]
+        if group_nulls > 0:
+            print("FAILED: Found NULL values in group_stage_simulations.")
+            conn.close()
+            return False
+        print("OK: No NULL values in group stage simulations table.")
+        
         conn.close()
     except Exception as e:
         print(f"FAILED: SQLite database validation error: {e}")
+        return False
+        
+    # 8. Check group_stage_simulations JSON
+    json_sim_path = "group_stage_simulations.json"
+    if not os.path.exists(json_sim_path):
+        print(f"FAILED: {json_sim_path} does not exist.")
+        return False
+    try:
+        with open(json_sim_path, "r", encoding="utf-8") as f:
+            sim_data = json.load(f)
+        if len(sim_data) != 72:
+            print(f"FAILED: Expected 72 simulations in JSON, but found {len(sim_data)}.")
+            return False
+        print("OK: group_stage_simulations.json exists and contains 72 records.")
+    except Exception as e:
+        print(f"FAILED: Could not parse {json_sim_path}: {e}")
         return False
         
     print("--- All validation checks PASSED successfully! ---")

@@ -3,6 +3,13 @@ import json
 import sqlite3
 import os
 import re
+import math
+
+# Poisson probability helper
+def poisson_probability(k, lam):
+    if lam <= 0:
+        return 1.0 if k == 0 else 0.0
+    return (lam**k * math.exp(-lam)) / math.factorial(k)
 
 # 1. Normalization function for team names
 def normalize_name(name):
@@ -15,6 +22,7 @@ def normalize_name(name):
         "US Virgin Islands": "U.S. Virgin Islands",
         "Trkiye": "Turkey",
         "Türkiye": "Turkey",
+        "Turkiye": "Turkey",
         "Cte d'Ivoire": "Ivory Coast",
         "Côte d'Ivoire": "Ivory Coast",
         "Cote d'Ivoire": "Ivory Coast",
@@ -243,6 +251,26 @@ def main():
     """)
     
     cursor.execute("""
+    CREATE TABLE group_stage_simulations (
+        match_number INTEGER PRIMARY KEY,
+        match_date TEXT,
+        group_name TEXT,
+        home_team TEXT,
+        away_team TEXT,
+        expected_goals_home REAL,
+        expected_goals_away REAL,
+        prob_win_home REAL,
+        prob_draw REAL,
+        prob_win_away REAL,
+        prob_over_2_5 REAL,
+        prob_btts REAL,
+        predicted_score_home INTEGER,
+        predicted_score_away INTEGER,
+        is_over_2_5_alert INTEGER
+    )
+    """)
+    
+    cursor.execute("""
     CREATE TABLE team_matches (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         team TEXT,
@@ -403,6 +431,111 @@ def main():
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (team, current_fifa, int(round(current_elo)), round(avg_form_index, 1), round(attack_strength, 2), round(defense_strength, 2), round(avg_win_rate, 2), round(avg_draw_rate, 2), round(avg_loss_rate, 2), int(round(avg_opp_elo)), round(avg_goals_scored, 2), round(avg_goals_conceded, 2)))
         
+    # 7. Simulate World Cup 2026 group stage matches
+    print("Simulating World Cup 2026 group stage matches...")
+    group_simulations = []
+    
+    # Calculate average defense strength across all 48 teams
+    avg_defense = sum(t["defense_strength"] for t in consolidated_data) / len(consolidated_data)
+    
+    # Map teams by name for easy lookup
+    teams_map = {t["team"]: t for t in consolidated_data}
+    
+    with open("fixtures.csv", "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row['stage'] == 'group-stage':
+                match_num = int(row['match_number'])
+                date_str = row['date']
+                group_name = row['group']
+                home = normalize_name(row['home_team'])
+                away = normalize_name(row['away_team'])
+                
+                stats_h = teams_map[home]
+                stats_a = teams_map[away]
+                
+                # Expected goals
+                lambda_h = (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                lambda_a = (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                
+                # Apply home advantage for host nations
+                if home in ["Mexico", "Canada", "United States"]:
+                    lambda_h *= 1.10
+                    lambda_a /= 1.10
+                    
+                win_h, win_a, draw = 0.0, 0.0, 0.0
+                over_2_5 = 0.0
+                btts = 0.0
+                max_prob = -1.0
+                best_score = (0, 0)
+                
+                for x in range(10):
+                    probX = poisson_probability(x, lambda_h)
+                    for y in range(10):
+                        probY = poisson_probability(y, lambda_a)
+                        probXY = probX * probY
+                        
+                        if x > y:
+                            win_h += probXY
+                        elif x < y:
+                            win_a += probXY
+                        else:
+                            draw += probXY
+                            
+                        if x + y > 2:
+                            over_2_5 += probXY
+                        if x > 0 and y > 0:
+                            btts += probXY
+                            
+                        if probXY > max_prob:
+                            max_prob = probXY
+                            best_score = (x, y)
+                            
+                # Normalize probabilities
+                sum_prob = win_h + win_a + draw
+                win_h /= sum_prob
+                win_a /= sum_prob
+                draw /= sum_prob
+                
+                # Over 2.5 alert threshold is 70%
+                is_alert = 1 if over_2_5 >= 0.70 else 0
+                
+                sim_record = {
+                    "match_number": match_num,
+                    "date": date_str,
+                    "group": group_name,
+                    "home_team": home,
+                    "away_team": away,
+                    "expected_goals_home": round(lambda_h, 2),
+                    "expected_goals_away": round(lambda_a, 2),
+                    "prob_win_home": round(win_h, 3),
+                    "prob_draw": round(draw, 3),
+                    "prob_win_away": round(win_a, 3),
+                    "prob_over_2_5": round(over_2_5, 3),
+                    "prob_btts": round(btts, 3),
+                    "predicted_score_home": best_score[0],
+                    "predicted_score_away": best_score[1],
+                    "is_over_2_5_alert": is_alert
+                }
+                group_simulations.append(sim_record)
+                
+                # Write to SQLite
+                cursor.execute("""
+                INSERT INTO group_stage_simulations (
+                    match_number, match_date, group_name, home_team, away_team,
+                    expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
+                    prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    match_num, date_str, group_name, home, away,
+                    round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
+                    round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], is_alert
+                ))
+                
+    # Save simulations to JSON
+    with open("group_stage_simulations.json", "w", encoding="utf-8") as f:
+        json.dump(group_simulations, f, indent=2, ensure_ascii=False)
+
     # Commit changes to SQLite
     conn.commit()
     conn.close()

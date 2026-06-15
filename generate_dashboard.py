@@ -9,7 +9,7 @@ def generate_html():
     with open("world_cup_2026_teams.json", "r", encoding="utf-8") as f:
         teams_summary = json.load(f)
         
-    # 2. Load match history from SQLite
+    # 2. Load data from SQLite
     conn = sqlite3.connect("world_cup_2026.db")
     cursor = conn.cursor()
     
@@ -43,22 +43,51 @@ def generate_html():
             "matches": matches
         }
         
+    # 3. Load group stage simulations
+    cursor.execute("""
+    SELECT match_number, match_date, group_name, home_team, away_team, 
+           expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away, 
+           prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert
+    FROM group_stage_simulations
+    ORDER BY match_number ASC
+    """)
+    
+    group_simulations = []
+    for row in cursor.fetchall():
+        group_simulations.append({
+            "match_number": row[0],
+            "date": row[1],
+            "group": row[2],
+            "home_team": row[3],
+            "away_team": row[4],
+            "exp_g_home": row[5],
+            "exp_g_away": row[6],
+            "prob_win_home": row[7],
+            "prob_draw": row[8],
+            "prob_win_away": row[9],
+            "prob_over_2_5": row[10],
+            "prob_btts": row[11],
+            "pred_home": row[12],
+            "pred_away": row[13],
+            "is_alert": row[14]
+        })
+        
     conn.close()
 
-    # 3. Write HTML file
+    # 4. Write HTML file
     html_content = f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Preditivo - Copa do Mundo 2026</title>
+    <title>Previsão de Gols - Copa do Mundo 2026</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --bg-color: #0b0a12;
-            --card-bg: rgba(25, 22, 43, 0.45);
+            --bg-color: #08070d;
+            --card-bg: rgba(20, 18, 36, 0.45);
             --card-border: rgba(255, 255, 255, 0.08);
             --accent-primary: #8b5cf6;
             --accent-secondary: #06b6d4;
@@ -67,6 +96,7 @@ def generate_html():
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --pink-alert: #ec4899;
         }}
 
         * {{
@@ -80,10 +110,10 @@ def generate_html():
             background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 2rem 1rem;
             background-image: 
-                radial-gradient(at 10% 20%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
-                radial-gradient(at 90% 80%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+                radial-gradient(at 10% 15%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 85%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
             background-attachment: fixed;
         }}
 
@@ -94,11 +124,11 @@ def generate_html():
 
         header {{
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }}
 
         h1 {{
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             background: linear-gradient(to right, #a78bfa, #22d3ee);
@@ -111,13 +141,81 @@ def generate_html():
             font-size: 1.1rem;
         }}
 
+        /* Navigation Tabs */
+        .tabs-nav {{
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
+        }}
+
+        .tab-btn {{
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }}
+
+        .tab-btn:hover {{
+            color: var(--text-main);
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.15);
+        }}
+
+        .tab-btn.active {{
+            color: #fff;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }}
+
+        .tab-btn.alert-tab-btn {{
+            border-color: rgba(236, 72, 153, 0.2);
+            color: #f472b6;
+        }}
+
+        .tab-btn.alert-tab-btn:hover {{
+            background: rgba(236, 72, 153, 0.05);
+            border-color: rgba(236, 72, 153, 0.5);
+        }}
+
+        .tab-btn.alert-tab-btn.active {{
+            background: linear-gradient(to right, var(--pink-alert), #d946ef);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }}
+
+        /* Tab Content panels */
+        .tab-content {{
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }}
+
+        .tab-content.active {{
+            display: block;
+        }}
+
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(8px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+
         /* Simulator / Comparison Section */
         .simulator-section {{
-            background: rgba(30, 27, 51, 0.3);
+            background: rgba(30, 27, 51, 0.25);
             border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 2rem;
-            margin-bottom: 3rem;
             backdrop-filter: blur(15px);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }}
@@ -126,9 +224,6 @@ def generate_html():
             font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             background: linear-gradient(to right, #f472b6, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -220,12 +315,6 @@ def generate_html():
             border-radius: 16px;
             padding: 1.8rem;
             margin-top: 1.5rem;
-            animation: fadeIn 0.5s ease;
-        }}
-
-        @keyframes fadeIn {{
-            from {{ opacity: 0; transform: translateY(10px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
         }}
 
         .sim-results-grid {{
@@ -247,7 +336,6 @@ def generate_html():
             color: var(--accent-secondary);
         }}
 
-        /* Probability Bar Chart */
         .prob-bar-container {{
             display: flex;
             height: 36px;
@@ -290,7 +378,6 @@ def generate_html():
             border-radius: 3px;
         }}
 
-        /* Expected Score Panel */
         .score-panel {{
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--card-border);
@@ -316,7 +403,6 @@ def generate_html():
             color: var(--text-muted);
         }}
 
-        /* Stats Matchups */
         .metric-matchup-row {{
             display: flex;
             align-items: center;
@@ -325,21 +411,138 @@ def generate_html():
             font-size: 0.9rem;
         }}
 
-        .matchup-bar-wrapper {{
-            flex: 1;
-            height: 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 4px;
-            margin: 0 1rem;
-            overflow: hidden;
+        /* Timeline / Matches table for Phase List */
+        .timeline-section {{
             display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }}
 
-        .matchup-bar-fill {{
-            height: 100%;
+        .timeline-date-group {{
+            background: rgba(20, 18, 36, 0.35);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
         }}
 
-        /* Grid filter tools */
+        .timeline-date-header {{
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-secondary);
+            padding-left: 0.75rem;
+            color: var(--accent-secondary);
+        }}
+
+        .match-row-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+        }}
+
+        .match-item-card {{
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.2s ease;
+        }}
+
+        .match-item-card:hover {{
+            border-color: rgba(255,255,255,0.08);
+        }}
+
+        .match-item-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 0.4rem;
+        }}
+
+        .match-item-teams {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }}
+
+        .match-item-score-prediction {{
+            text-align: center;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px dashed rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+        }}
+
+        .match-item-footer-stats {{
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }}
+
+        /* Alerts Styling */
+        .alerts-intro {{
+            background: rgba(236, 72, 153, 0.08);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }}
+
+        .alerts-icon {{
+            font-size: 2.2rem;
+            color: var(--pink-alert);
+            animation: pulse 2s infinite;
+        }}
+
+        @keyframes pulse {{
+            0% {{ transform: scale(1); opacity: 1; }}
+            50% {{ transform: scale(1.1); opacity: 0.8; }}
+            100% {{ transform: scale(1); opacity: 1; }}
+        }}
+
+        .alert-card-glow {{
+            position: relative;
+            border: 1px solid rgba(236, 72, 153, 0.25) !important;
+            background: rgba(236, 72, 153, 0.03) !important;
+        }}
+
+        .alert-card-glow::after {{
+            content: 'ALERTA 70%+ OVER 2.5';
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: linear-gradient(to right, var(--pink-alert), #d946ef);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+        }}
+
+        .alert-value-highlight {{
+            color: var(--pink-alert) !important;
+            font-weight: 700;
+        }}
+
+        /* Filters and general grid */
         .filter-section {{
             display: flex;
             gap: 1rem;
@@ -386,7 +589,6 @@ def generate_html():
             border-color: var(--accent-primary);
         }}
 
-        /* Cards Grid */
         .teams-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -611,99 +813,126 @@ def generate_html():
             <p class="subtitle">Base de Dados Preditiva das Seleções Qualificadas</p>
         </header>
 
-        <!-- Poisson Simulator Section -->
-        <div class="simulator-section">
-            <div class="simulator-title">
-                <span style="font-size: 1.6rem;">🔮</span> Simulador de Confrontos (Modelo de Poisson)
-            </div>
-            
-            <div class="simulator-controls">
-                <div class="sim-select-wrapper">
-                    <span class="sim-select-label">Seleção A</span>
-                    <select id="teamASelect" class="sim-select"></select>
-                </div>
-                <div class="vs-badge">VS</div>
-                <div class="sim-select-wrapper">
-                    <span class="sim-select-label">Seleção B</span>
-                    <select id="teamBSelect" class="sim-select"></select>
-                </div>
-                <button id="compareBtn" class="compare-btn">Simular Partida</button>
-            </div>
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab(event, 'simulador')">🔮 Simulador de Jogos</button>
+            <button class="tab-btn" onclick="switchTab(event, 'fase-grupos')">📅 Fase de Grupos</button>
+            <button class="tab-btn alert-tab-btn" onclick="switchTab(event, 'alertas')">🚨 Alertas Over 2.5</button>
+            <button class="tab-btn" onclick="switchTab(event, 'selecoes')">🏳️  Diretório de Seleções</button>
+        </div>
 
-            <!-- Simulation Results Card -->
-            <div id="simResultsCard" class="sim-results-card">
-                <div class="sim-results-grid">
-                    <div>
-                        <div class="probability-header">Probabilidades do Confronto</div>
-                        <div class="prob-bar-container">
-                            <div id="probWinA" class="prob-bar-part winA" title="Vitória Seleção A">33%</div>
-                            <div id="probDraw" class="prob-bar-part draw" title="Empate">33%</div>
-                            <div id="probWinB" class="prob-bar-part winB" title="Vitória Seleção B">33%</div>
-                        </div>
-                        <div class="prob-labels">
-                            <span class="prob-label-item">
-                                <span class="color-dot" style="background: var(--success);"></span>
-                                <span id="labelTeamA">Seleção A</span>: <strong id="valWinA">0%</strong>
-                            </span>
-                            <span class="prob-label-item">
-                                <span class="color-dot" style="background: #4b5563;"></span>
-                                Empate: <strong id="valDraw">0%</strong>
-                            </span>
-                            <span class="prob-label-item">
-                                <span class="color-dot" style="background: var(--danger);"></span>
-                                <span id="labelTeamB">Seleção B</span>: <strong id="valWinB">0%</strong>
-                            </span>
-                        </div>
-
-                        <!-- Mini matchup indicators -->
-                        <div class="metric-matchup-row">
-                            <span id="matchupStatValA_1">0.0</span>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">Gols Esperados (xG)</span>
-                            <span id="matchupStatValB_1">0.0</span>
-                        </div>
-                        <div class="metric-matchup-row">
-                            <span id="matchupStatValA_2">0%</span>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">Ambas Marcam (BTTS)</span>
-                            <span id="matchupStatValB_2">0%</span>
-                        </div>
-                        <div class="metric-matchup-row">
-                            <span id="matchupStatValA_3">0%</span>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">Mais de 2.5 Gols (Over 2.5)</span>
-                            <span id="matchupStatValB_3">0%</span>
-                        </div>
+        <!-- TAB 1: SIMULADOR DE JOGOS -->
+        <div id="simulador" class="tab-content active">
+            <div class="simulator-section">
+                <div class="simulator-title">
+                    Simular Confronto (Modelo de Poisson)
+                </div>
+                
+                <div class="simulator-controls">
+                    <div class="sim-select-wrapper">
+                        <span class="sim-select-label">Seleção A</span>
+                        <select id="teamASelect" class="sim-select"></select>
                     </div>
+                    <div class="vs-badge">VS</div>
+                    <div class="sim-select-wrapper">
+                        <span class="sim-select-label">Seleção B</span>
+                        <select id="teamBSelect" class="sim-select"></select>
+                    </div>
+                    <button id="compareBtn" class="compare-btn">Simular Partida</button>
+                </div>
 
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <div class="score-panel">
-                            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Placar Mais Provável</div>
-                            <div id="predictedScore" class="score-num">2 - 1</div>
-                            <div id="predictedScoreChance" class="score-chance">Probabilidade: 0%</div>
+                <!-- Simulation Results Card -->
+                <div id="simResultsCard" class="sim-results-card">
+                    <div class="sim-results-grid">
+                        <div>
+                            <div class="probability-header">Probabilidades do Confronto</div>
+                            <div class="prob-bar-container">
+                                <div id="probWinA" class="prob-bar-part winA" title="Vitória Seleção A">33%</div>
+                                <div id="probDraw" class="prob-bar-part draw" title="Empate">33%</div>
+                                <div id="probWinB" class="prob-bar-part winB" title="Vitória Seleção B">33%</div>
+                            </div>
+                            <div class="prob-labels">
+                                <span class="prob-label-item">
+                                    <span class="color-dot" style="background: var(--success);"></span>
+                                    <span id="labelTeamA">Seleção A</span>: <strong id="valWinA">0%</strong>
+                                </span>
+                                <span class="prob-label-item">
+                                    <span class="color-dot" style="background: #4b5563;"></span>
+                                    Empate: <strong id="valDraw">0%</strong>
+                                </span>
+                                <span class="prob-label-item">
+                                    <span class="color-dot" style="background: var(--danger);"></span>
+                                    <span id="labelTeamB">Seleção B</span>: <strong id="valWinB">0%</strong>
+                                </span>
+                            </div>
+
+                            <!-- Matchup stats -->
+                            <div class="metric-matchup-row">
+                                <span id="matchupStatValA_1">0.0</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Gols Esperados (xG)</span>
+                                <span id="matchupStatValB_1">0.0</span>
+                            </div>
+                            <div class="metric-matchup-row">
+                                <span id="matchupStatValA_2">0%</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Ambas Marcam (BTTS)</span>
+                                <span id="matchupStatValB_2">Sim</span>
+                            </div>
+                            <div class="metric-matchup-row">
+                                <span id="matchupStatValA_3">0%</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Mais de 2.5 Gols (Over 2.5)</span>
+                                <span id="matchupStatValB_3">Sim</span>
+                            </div>
                         </div>
-                        <div class="score-panel" style="background: rgba(6, 182, 212, 0.04); border-color: rgba(6, 182, 212, 0.15);">
-                            <div style="font-size: 0.8rem; color: var(--accent-secondary); font-weight: 600; text-transform: uppercase;">Total de Gols Esperados</div>
-                            <div id="expectedTotalGoals" style="font-size: 1.8rem; font-weight: 700; margin: 0.2rem 0;">2.84</div>
-                            <div style="font-size: 0.80rem; color: var(--text-muted);">Média da partida</div>
+
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div class="score-panel">
+                                <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Placar Mais Provável</div>
+                                <div id="predictedScore" class="score-num">2 - 1</div>
+                                <div id="predictedScoreChance" class="score-chance">Probabilidade: 0%</div>
+                            </div>
+                            <div class="score-panel" style="background: rgba(6, 182, 212, 0.04); border-color: rgba(6, 182, 212, 0.15);">
+                                <div style="font-size: 0.8rem; color: var(--accent-secondary); font-weight: 600; text-transform: uppercase;">Total de Gols Esperados</div>
+                                <div id="expectedTotalGoals" style="font-size: 1.8rem; font-weight: 700; margin: 0.2rem 0;">2.84</div>
+                                <div style="font-size: 0.80rem; color: var(--text-muted);">Média da partida</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Grid Filter Tools -->
-        <div class="filter-section">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Buscar seleção na lista...">
-            <select id="sortSelect" class="sort-select">
-                <option value="elo-desc">Elo Rating (Maior)</option>
-                <option value="elo-asc">Elo Rating (Menor)</option>
-                <option value="fifa-asc">Ranking FIFA (Melhor)</option>
-                <option value="form-desc">Forma Recente</option>
-                <option value="attack-desc">Força de Ataque</option>
-                <option value="defense-asc">Força de Defesa (Melhor)</option>
-            </select>
+        <!-- TAB 2: FASE DE GRUPOS CRONOLÓGICA -->
+        <div id="fase-grupos" class="tab-content">
+            <div class="timeline-section" id="timelineSection"></div>
         </div>
 
-        <!-- Teams Grid -->
-        <div class="teams-grid" id="teamsGrid"></div>
+        <!-- TAB 3: ALERTAS OVER 2.5 (>= 70%) -->
+        <div id="alertas" class="tab-content">
+            <div class="alerts-intro">
+                <span class="alerts-icon">🚨</span>
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.2rem;">Alertas de Over 2.5 Gols (Threshold &ge; 70%)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Estas são as partidas da fase de grupos com maior propensão a gols, onde o modelo Poisson estimou mais de 70% de probabilidade de sair 3 ou mais gols no confronto.</p>
+                </div>
+            </div>
+            <div class="timeline-section" id="alertsSection"></div>
+        </div>
+
+        <!-- TAB 4: SELEÇÕES -->
+        <div id="selecoes" class="tab-content">
+            <div class="filter-section">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar seleção na lista...">
+                <select id="sortSelect" class="sort-select">
+                    <option value="elo-desc">Elo Rating (Maior)</option>
+                    <option value="elo-asc">Elo Rating (Menor)</option>
+                    <option value="fifa-asc">Ranking FIFA (Melhor)</option>
+                    <option value="form-desc">Forma Recente</option>
+                    <option value="attack-desc">Força de Ataque</option>
+                    <option value="defense-asc">Força de Defesa (Melhor)</option>
+                </select>
+            </div>
+            <div class="teams-grid" id="teamsGrid"></div>
+        </div>
     </div>
 
     <!-- Detailed Modal Overlay -->
@@ -738,8 +967,9 @@ def generate_html():
     </div>
 
     <script>
-        // Injected payload
+        // Injected payloads
         const dbData = {json.dumps(db_data, ensure_ascii=False)};
+        const groupSimulations = {json.dumps(group_simulations, ensure_ascii=False)};
         
         // Calculate average defense strength dynamically across all 48 teams
         const allTeams = Object.values(dbData);
@@ -757,6 +987,18 @@ def generate_html():
         const compareBtn = document.getElementById('compareBtn');
         const simResultsCard = document.getElementById('simResultsCard');
 
+        // Tab Switching Logic
+        function switchTab(evt, tabId) {{
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }}
+
         // Populate simulation select dropdowns
         function populateSelectors() {{
             const sortedNames = Object.keys(dbData).sort();
@@ -764,7 +1006,7 @@ def generate_html():
             teamASelect.innerHTML = '';
             teamBSelect.innerHTML = '';
             
-            sortedNames.forEach((name, idx) => {{
+            sortedNames.forEach(name => {{
                 const optionA = document.createElement('option');
                 optionA.value = name;
                 optionA.text = name;
@@ -802,23 +1044,14 @@ def generate_html():
             const statsA = dbData[teamA].summary;
             const statsB = dbData[teamB].summary;
             
-            // Calculate lambda (Expected Goals) for each team
-            // ExpG = Attack_A * Defense_B / AvgDefense
             const lambdaA = (statsA.attack_strength * statsB.defense_strength) / avgDefense;
             const lambdaB = (statsB.attack_strength * statsA.defense_strength) / avgDefense;
             
-            // Grid simulation (up to 9 goals)
-            let winA = 0;
-            let winB = 0;
-            let draw = 0;
-            let over1_5 = 0;
-            let over2_5 = 0;
-            let btts = 0;
-            
+            let winA = 0, winB = 0, draw = 0;
+            let over1_5 = 0, over2_5 = 0, btts = 0;
             let maxProb = -1;
             let bestScore = [0, 0];
             
-            // 10x10 score grid
             for (let x = 0; x < 10; x++) {{
                 const probX = poissonProbability(x, lambdaA);
                 for (let y = 0; y < 10; y++) {{
@@ -840,13 +1073,11 @@ def generate_html():
                 }}
             }}
             
-            // Normalize probabilities to sum to 1.0 (since we capped grid at 9)
             const sumP = winA + winB + draw;
-            winA = winA / sumP;
-            winB = winB / sumP;
-            draw = draw / sumP;
+            winA /= sumP;
+            winB /= sumP;
+            draw /= sumP;
             
-            // Update UI Elements
             document.getElementById('labelTeamA').innerText = teamA;
             document.getElementById('labelTeamB').innerText = teamB;
             
@@ -866,27 +1097,134 @@ def generate_html():
             barDraw.innerText = (draw * 100).toFixed(0) + '%';
             barB.innerText = (winB * 100).toFixed(0) + '%';
             
-            // Placar esperado
             document.getElementById('predictedScore').innerText = `${{bestScore[0]}} - ${{bestScore[1]}}`;
             document.getElementById('predictedScoreChance').innerText = `Probabilidade: ${{(maxProb * 100).toFixed(1)}}%`;
             document.getElementById('expectedTotalGoals').innerText = (lambdaA + lambdaB).toFixed(2);
             
-            // Stats matchups numbers
             document.getElementById('matchupStatValA_1').innerText = lambdaA.toFixed(2) + " xG";
             document.getElementById('matchupStatValB_1').innerText = lambdaB.toFixed(2) + " xG";
             
             document.getElementById('matchupStatValA_2').innerText = (btts * 100).toFixed(1) + '%';
-            document.getElementById('matchupStatValB_2').innerText = "Sim";
-            
             document.getElementById('matchupStatValA_3').innerText = (over2_5 * 100).toFixed(1) + '%';
-            document.getElementById('matchupStatValB_3').innerText = "Sim";
             
             simResultsCard.style.display = 'block';
         }}
 
-        compareBtn.addEventListener('click', simulateMatch);
+        // Render Group Stage and Alerts timeline
+        function renderGroupStageTimeline() {{
+            const timelineSection = document.getElementById('timelineSection');
+            const alertsSection = document.getElementById('alertsSection');
+            
+            timelineSection.innerHTML = '';
+            alertsSection.innerHTML = '';
+            
+            // Group simulations by date
+            const dateGroups = {{}};
+            const alertDateGroups = {{}};
+            let alertCount = 0;
+            
+            groupSimulations.forEach(sim => {{
+                // Standard timeline
+                if (!dateGroups[sim.date]) dateGroups[sim.date] = [];
+                dateGroups[sim.date].push(sim);
+                
+                // Alerts timeline (threshold >= 70%)
+                if (sim.is_alert) {{
+                    alertCount++;
+                    if (!alertDateGroups[sim.date]) alertDateGroups[sim.date] = [];
+                    alertDateGroups[sim.date].push(sim);
+                }}
+            }});
+            
+            // 1. Render main timeline
+            Object.keys(dateGroups).sort().forEach(date => {{
+                const groupCard = document.createElement('div');
+                groupCard.className = 'timeline-date-group';
+                
+                // Format Date Label
+                const dateObj = new Date(date + 'T00:00:00');
+                const formattedDate = dateObj.toLocaleDateString('pt-BR', {{ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }});
+                
+                let matchesHtml = '';
+                dateGroups[date].forEach(match => {{
+                    matchesHtml += `
+                        <div class="match-item-card">
+                            <div class="match-item-header">
+                                <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}</span>
+                                <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
+                            </div>
+                            <div class="match-item-teams">
+                                <span>${{match.home_team}}</span>
+                                <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
+                                <span>${{match.away_team}}</span>
+                            </div>
+                            <div class="match-item-score-prediction">
+                                Placar Provável: <strong>${{match.pred_home}} - ${{match.pred_away}}</strong>
+                            </div>
+                            <div class="match-item-footer-stats">
+                                <span>V/E/D: ${{Math.round(match.prob_win_home*100)}}%/${{Math.round(match.prob_draw*100)}}%/${{Math.round(match.prob_win_away*100)}}%</span>
+                                <span style="color: ${{match.prob_over_2_5 >= 0.70 ? 'var(--pink-alert)' : 'var(--text-muted)'}}">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
+                            </div>
+                        </div>
+                    `;
+                }});
+                
+                groupCard.innerHTML = `
+                    <div class="timeline-date-header">${{formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}}</div>
+                    <div class="match-row-grid">${{matchesHtml}}</div>
+                `;
+                timelineSection.appendChild(groupCard);
+            }});
+            
+            // 2. Render alerts timeline
+            if (alertCount === 0) {{
+                alertsSection.innerHTML += `
+                    <div class="timeline-date-group" style="text-align:center; padding: 3rem; color: var(--text-muted);">
+                        Nenhum confronto na fase de grupos atingiu os 70% ou mais de probabilidade para Over 2.5 Gols.
+                    </div>
+                `;
+            }} else {{
+                Object.keys(alertDateGroups).sort().forEach(date => {{
+                    const groupCard = document.createElement('div');
+                    groupCard.className = 'timeline-date-group';
+                    
+                    const dateObj = new Date(date + 'T00:00:00');
+                    const formattedDate = dateObj.toLocaleDateString('pt-BR', {{ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }});
+                    
+                    let matchesHtml = '';
+                    alertDateGroups[date].forEach(match => {{
+                        matchesHtml += `
+                            <div class="match-item-card alert-card-glow">
+                                <div class="match-item-header">
+                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}</span>
+                                    <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
+                                </div>
+                                <div class="match-item-teams">
+                                    <span>${{match.home_team}}</span>
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
+                                    <span>${{match.away_team}}</span>
+                                </div>
+                                <div class="match-item-score-prediction" style="background: rgba(236, 72, 153, 0.08); border-color: rgba(236, 72, 153, 0.25);">
+                                    Placar Provável: <strong>${{match.pred_home}} - ${{match.pred_away}}</strong>
+                                </div>
+                                <div class="match-item-footer-stats">
+                                    <span>V/E/D: ${{Math.round(match.prob_win_home*100)}}%/${{Math.round(match.prob_draw*100)}}%/${{Math.round(match.prob_win_away*100)}}%</span>
+                                    <span class="alert-value-highlight">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
+                                </div>
+                            </div>
+                        `;
+                    }});
+                    
+                    groupCard.innerHTML = `
+                        <div class="timeline-date-header" style="border-color: var(--pink-alert); color: var(--pink-alert);">${{formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}}</div>
+                        <div class="match-row-grid">${{matchesHtml}}</div>
+                    `;
+                    alertsSection.appendChild(groupCard);
+                }});
+            }}
+        }}
 
-        // Render cards
+        // Render team cards
         function renderTeams(filteredTeams) {{
             teamsGrid.innerHTML = '';
             
@@ -1037,6 +1375,7 @@ def generate_html():
 
         // Initialize selectors and view
         populateSelectors();
+        renderGroupStageTimeline();
         updateView();
     </script>
 </body>
