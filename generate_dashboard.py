@@ -1043,9 +1043,9 @@ def generate_html():
 </html>
 """
 
-    with open("dashboard.html", "w", encoding="utf-8") as f:
+    with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("Dashboard HTML created successfully as 'dashboard.html'!")
+    print("Dashboard HTML created successfully as 'index.html'!")
 
 if __name__ == "__main__":
     generate_html()
