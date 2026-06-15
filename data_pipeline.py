@@ -266,7 +266,9 @@ def main():
         prob_btts REAL,
         predicted_score_home INTEGER,
         predicted_score_away INTEGER,
-        is_over_2_5_alert INTEGER
+        is_over_2_5_alert INTEGER,
+        real_goals_home INTEGER,
+        real_goals_away INTEGER
     )
     """)
     
@@ -433,6 +435,57 @@ def main():
         
     # 7. Simulate World Cup 2026 group stage matches
     print("Simulating World Cup 2026 group stage matches...")
+    
+    # Load actual Copa 2026 results
+    print("Loading actual Copa 2026 results...")
+    real_results = {}
+    
+    # Map matchups from fixtures to match numbers
+    fixture_lookup = {}
+    with open("fixtures.csv", "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row['stage'] == 'group-stage':
+                h_norm = normalize_name(row['home_team'])
+                a_norm = normalize_name(row['away_team'])
+                m_num = int(row['match_number'])
+                fixture_lookup[(h_norm, a_norm)] = m_num
+
+    # Ingest from results.csv (FIFA World Cup matches on/after 2026-06-11)
+    with open("results.csv", "r", encoding="utf-8", errors="ignore") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row['tournament'] == 'FIFA World Cup' and row['date'] >= '2026-06-11':
+                h_norm = normalize_name(row['home_team'])
+                a_norm = normalize_name(row['away_team'])
+                h_score = row['home_score']
+                a_score = row['away_score']
+                if h_score and a_score and h_score != 'NA' and a_score != 'NA':
+                    if (h_norm, a_norm) in fixture_lookup:
+                        m_num = fixture_lookup[(h_norm, a_norm)]
+                        real_results[m_num] = {
+                            "home_score": int(h_score),
+                            "away_score": int(a_score)
+                        }
+
+    # Ingest from copa_2026_real_results.json (manual overrides/updates)
+    real_results_json = "copa_2026_real_results.json"
+    if os.path.exists(real_results_json):
+        try:
+            with open(real_results_json, "r", encoding="utf-8") as f:
+                custom_res = json.load(f)
+                for m_num_str, scores in custom_res.items():
+                    m_num = int(m_num_str)
+                    real_results[m_num] = {
+                        "home_score": int(scores["home_score"]),
+                        "away_score": int(scores["away_score"])
+                    }
+            print(f"Loaded {len(custom_res)} custom results from JSON override.")
+        except Exception as e:
+            print(f"Error loading custom real results from JSON: {e}")
+            
+    print(f"Total resolved real results for group stage: {len(real_results)}")
+
     group_simulations = []
     
     # Calculate average defense strength across all 48 teams
@@ -500,6 +553,13 @@ def main():
                 # Over 2.5 alert threshold is 70%
                 is_alert = 1 if over_2_5 >= 0.70 else 0
                 
+                # Check for real results
+                real_h = None
+                real_a = None
+                if match_num in real_results:
+                    real_h = real_results[match_num]["home_score"]
+                    real_a = real_results[match_num]["away_score"]
+                
                 sim_record = {
                     "match_number": match_num,
                     "date": date_str,
@@ -515,7 +575,9 @@ def main():
                     "prob_btts": round(btts, 3),
                     "predicted_score_home": best_score[0],
                     "predicted_score_away": best_score[1],
-                    "is_over_2_5_alert": is_alert
+                    "is_over_2_5_alert": is_alert,
+                    "real_score_home": real_h,
+                    "real_score_away": real_a
                 }
                 group_simulations.append(sim_record)
                 
@@ -524,12 +586,14 @@ def main():
                 INSERT INTO group_stage_simulations (
                     match_number, match_date, group_name, home_team, away_team,
                     expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
-                    prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert,
+                    real_goals_home, real_goals_away
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     match_num, date_str, group_name, home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
-                    round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], is_alert
+                    round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], is_alert,
+                    real_h, real_a
                 ))
                 
     # Save simulations to JSON

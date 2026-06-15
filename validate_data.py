@@ -141,7 +141,14 @@ def run_validation():
             print("FAILED: Found NULL values in group_stage_simulations.")
             conn.close()
             return False
-        print("OK: No NULL values in group stage simulations table.")
+        # Verify columns real_goals_home and real_goals_away exist
+        cursor.execute("PRAGMA table_info(group_stage_simulations)")
+        columns = [col[1] for col in cursor.fetchall()]
+        if "real_goals_home" not in columns or "real_goals_away" not in columns:
+            print("FAILED: SQLite group_stage_simulations is missing real result columns.")
+            conn.close()
+            return False
+        print("OK: SQLite group_stage_simulations has real goals columns.")
         
         conn.close()
     except Exception as e:
@@ -160,6 +167,13 @@ def run_validation():
             print(f"FAILED: Expected 72 simulations in JSON, but found {len(sim_data)}.")
             return False
         print("OK: group_stage_simulations.json exists and contains 72 records.")
+        
+        # Check that keys real_score_home and real_score_away are present in JSON
+        for sim in sim_data:
+            if "real_score_home" not in sim or "real_score_away" not in sim:
+                print(f"FAILED: Simulation record for match #{sim.get('match_number')} is missing real score keys.")
+                return False
+        print("OK: group_stage_simulations.json has real score keys on all records.")
     except Exception as e:
         print(f"FAILED: Could not parse {json_sim_path}: {e}")
         return False

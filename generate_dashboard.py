@@ -47,7 +47,8 @@ def generate_html():
     cursor.execute("""
     SELECT match_number, match_date, group_name, home_team, away_team, 
            expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away, 
-           prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert
+           prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert,
+           real_goals_home, real_goals_away
     FROM group_stage_simulations
     ORDER BY match_number ASC
     """)
@@ -69,7 +70,9 @@ def generate_html():
             "prob_btts": row[11],
             "pred_home": row[12],
             "pred_away": row[13],
-            "is_alert": row[14]
+            "is_alert": row[14],
+            "real_home": row[15],
+            "real_away": row[16]
         })
         
     conn.close()
@@ -803,6 +806,119 @@ def generate_html():
         .result-badge.w {{ background: rgba(16, 185, 129, 0.2); color: var(--success); }}
         .result-badge.d {{ background: rgba(245, 158, 11, 0.2); color: var(--warning); }}
         .result-badge.l {{ background: rgba(239, 68, 68, 0.2); color: var(--danger); }}
+
+        /* Time Control Panel */
+        .time-control-panel {{
+            background: rgba(15, 13, 28, 0.65);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }}
+
+        @media (min-width: 768px) {{
+            .time-control-panel {{
+                flex-direction: row;
+                padding: 1rem 1.8rem;
+            }}
+        }}
+
+        .time-control-title {{
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent-secondary);
+        }}
+
+        .calendar-icon {{
+            font-size: 1.3rem;
+        }}
+
+        .time-control-actions {{
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }}
+
+        .time-btn {{
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            user-select: none;
+        }}
+
+        .time-btn:hover {{
+            background: var(--accent-secondary);
+            color: #000;
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+        }}
+
+        .copa-date-picker {{
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            text-align: center;
+        }}
+
+        .copa-date-picker:focus {{
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.25);
+        }}
+
+        .time-control-status {{
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }}
+
+        .match-item-real-result {{
+            text-align: center;
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+            color: var(--text-main);
+        }}
+
+        .match-item-real-result.waiting {{
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+        }}
+        
+        .match-item-card.match-played {{
+            background: rgba(16, 185, 129, 0.03) !important;
+            border-color: rgba(16, 185, 129, 0.12) !important;
+        }}
+        
+        .match-item-card.match-played .match-item-header span {{
+            color: rgba(16, 185, 129, 0.6) !important;
+        }}
     </style>
 </head>
 <body>
@@ -813,11 +929,27 @@ def generate_html():
             <p class="subtitle">Base de Dados Preditiva das Seleções Qualificadas</p>
         </header>
 
+        <!-- Time Control Panel -->
+        <div class="time-control-panel">
+            <div class="time-control-title">
+                <span class="calendar-icon">📅</span>
+                <span>Controle de Tempo da Copa 2026</span>
+            </div>
+            <div class="time-control-actions">
+                <button id="prevDayBtn" class="time-btn">◀ Dia Anterior</button>
+                <input type="date" id="copaDateInput" class="copa-date-picker" min="2026-06-11" max="2026-06-28" value="2026-06-15">
+                <button id="nextDayBtn" class="time-btn">Próximo Dia ▶</button>
+            </div>
+            <div class="time-control-status" id="timeControlStatus">
+                Carregando...
+            </div>
+        </div>
+
         <!-- Navigation Tabs -->
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab(event, 'simulador')">🔮 Simulador de Jogos</button>
             <button class="tab-btn" onclick="switchTab(event, 'fase-grupos')">📅 Fase de Grupos</button>
-            <button class="tab-btn alert-tab-btn" onclick="switchTab(event, 'alertas')">🚨 Alertas Over 2.5</button>
+            <button class="tab-btn alert-tab-btn" onclick="switchTab(event, 'alertas')">🚨 Alertas Over 2.5 <span id="alertsBadge" style="background: var(--pink-alert); color: #fff; padding: 0.1rem 0.4rem; border-radius: 6px; font-size: 0.75rem; margin-left: 0.3rem;">0</span></button>
             <button class="tab-btn" onclick="switchTab(event, 'selecoes')">🏳️  Diretório de Seleções</button>
         </div>
 
@@ -1110,8 +1242,8 @@ def generate_html():
             simResultsCard.style.display = 'block';
         }}
 
-        // Render Group Stage and Alerts timeline
-        function renderGroupStageTimeline() {{
+        // Render Group Stage and Alerts timeline dynamically
+        function renderGroupStageTimeline(selectedDate) {{
             const timelineSection = document.getElementById('timelineSection');
             const alertsSection = document.getElementById('alertsSection');
             
@@ -1121,7 +1253,7 @@ def generate_html():
             // Group simulations by date
             const dateGroups = {{}};
             const alertDateGroups = {{}};
-            let alertCount = 0;
+            let activeAlertCount = 0;
             
             groupSimulations.forEach(sim => {{
                 // Standard timeline
@@ -1129,12 +1261,16 @@ def generate_html():
                 dateGroups[sim.date].push(sim);
                 
                 // Alerts timeline (threshold >= 70%)
-                if (sim.is_alert) {{
-                    alertCount++;
+                const isCompleted = sim.date < selectedDate || sim.real_home !== null;
+                if (sim.is_alert && !isCompleted) {{
+                    activeAlertCount++;
                     if (!alertDateGroups[sim.date]) alertDateGroups[sim.date] = [];
                     alertDateGroups[sim.date].push(sim);
                 }}
             }});
+            
+            // Update alerts tab badge
+            document.getElementById('alertsBadge').innerText = activeAlertCount;
             
             // 1. Render main timeline
             Object.keys(dateGroups).sort().forEach(date => {{
@@ -1144,11 +1280,24 @@ def generate_html():
                 // Format Date Label
                 const dateObj = new Date(date + 'T00:00:00');
                 const formattedDate = dateObj.toLocaleDateString('pt-BR', {{ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }});
+                const isDayPlayed = date < selectedDate;
                 
                 let matchesHtml = '';
                 dateGroups[date].forEach(match => {{
+                    const isMatchPlayed = match.date < selectedDate || match.real_home !== null;
+                    const cardClass = isMatchPlayed ? 'match-item-card match-played' : 'match-item-card';
+                    
+                    let realResultHtml = '';
+                    if (match.real_home !== null) {{
+                        realResultHtml = `<div class="match-item-real-result">Resultado COPA 2026: <strong>${{match.real_home}} - ${{match.real_away}}</strong></div>`;
+                    }} else if (isMatchPlayed) {{
+                        realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>Pendente</strong></div>`;
+                    }} else {{
+                        realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>- (Agendado)</strong></div>`;
+                    }}
+
                     matchesHtml += `
-                        <div class="match-item-card">
+                        <div class="${{cardClass}}">
                             <div class="match-item-header">
                                 <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}</span>
                                 <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
@@ -1161,6 +1310,7 @@ def generate_html():
                             <div class="match-item-score-prediction">
                                 Placar Provável: <strong>${{match.pred_home}} - ${{match.pred_away}}</strong>
                             </div>
+                            ${{realResultHtml}}
                             <div class="match-item-footer-stats">
                                 <span>V/E/D: ${{Math.round(match.prob_win_home*100)}}%/${{Math.round(match.prob_draw*100)}}%/${{Math.round(match.prob_win_away*100)}}%</span>
                                 <span style="color: ${{match.prob_over_2_5 >= 0.70 ? 'var(--pink-alert)' : 'var(--text-muted)'}}">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
@@ -1170,17 +1320,17 @@ def generate_html():
                 }});
                 
                 groupCard.innerHTML = `
-                    <div class="timeline-date-header">${{formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}}</div>
+                    <div class="timeline-date-header" style="${{isDayPlayed ? 'border-color: var(--success); color: var(--success);' : ''}}">${{formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}}</div>
                     <div class="match-row-grid">${{matchesHtml}}</div>
                 `;
                 timelineSection.appendChild(groupCard);
             }});
             
             // 2. Render alerts timeline
-            if (alertCount === 0) {{
+            if (activeAlertCount === 0) {{
                 alertsSection.innerHTML += `
                     <div class="timeline-date-group" style="text-align:center; padding: 3rem; color: var(--text-muted);">
-                        Nenhum confronto na fase de grupos atingiu os 70% ou mais de probabilidade para Over 2.5 Gols.
+                        Nenhum alerta ativo de Over 2.5 Gols após a data selecionada.
                     </div>
                 `;
             }} else {{
@@ -1373,9 +1523,61 @@ def generate_html():
             if (e.target === modalOverlay) closeModal();
         }});
 
+        // Setup Time Control Panel
+        const dateInput = document.getElementById('copaDateInput');
+        const prevBtn = document.getElementById('prevDayBtn');
+        const nextBtn = document.getElementById('nextDayBtn');
+        const statusText = document.getElementById('timeControlStatus');
+
+        function updateStatusText(dateStr) {{
+            const dateObj = new Date(dateStr + 'T00:00:00');
+            const options = {{ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }};
+            const formatted = dateObj.toLocaleDateString('pt-BR', options);
+            statusText.textContent = `Tempo: ${{formatted.charAt(0).toUpperCase() + formatted.slice(1)}}`;
+        }}
+
+        function changeDate(dateStr) {{
+            updateStatusText(dateStr);
+            renderGroupStageTimeline(dateStr);
+        }}
+
+        dateInput.addEventListener('change', (e) => {{
+            changeDate(e.target.value);
+        }});
+
+        prevBtn.addEventListener('click', () => {{
+            const current = new Date(dateInput.value + 'T00:00:00');
+            current.setDate(current.getDate() - 1);
+            const yyyy = current.getFullYear();
+            const mm = String(current.getMonth() + 1).padStart(2, '0');
+            const dd = String(current.getDate()).padStart(2, '0');
+            const newDate = `${{yyyy}}-${{mm}}-${{dd}}`;
+            if (newDate >= dateInput.min) {{
+                dateInput.value = newDate;
+                changeDate(newDate);
+            }}
+        }});
+
+        nextBtn.addEventListener('click', () => {{
+            const current = new Date(dateInput.value + 'T00:00:00');
+            current.setDate(current.getDate() + 1);
+            const yyyy = current.getFullYear();
+            const mm = String(current.getMonth() + 1).padStart(2, '0');
+            const dd = String(current.getDate()).padStart(2, '0');
+            const newDate = `${{yyyy}}-${{mm}}-${{dd}}`;
+            if (newDate <= dateInput.max) {{
+                dateInput.value = newDate;
+                changeDate(newDate);
+            }}
+        }});
+
         // Initialize selectors and view
         populateSelectors();
-        renderGroupStageTimeline();
+        
+        // Initialize to June 15, 2026 by default
+        dateInput.value = "2026-06-15";
+        changeDate("2026-06-15");
+        
         updateView();
     </script>
 </body>

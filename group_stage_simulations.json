@@ -14,7 +14,9 @@
     "prob_btts": 0.42,
     "predicted_score_home": 1,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": 2,
+    "real_score_away": 0
   },
   {
     "match_number": 2,
@@ -31,7 +33,9 @@
     "prob_btts": 0.802,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": 2,
+    "real_score_away": 1
   },
   {
     "match_number": 3,
@@ -48,7 +52,9 @@
     "prob_btts": 0.499,
     "predicted_score_home": 2,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": 1,
+    "real_score_away": 1
   },
   {
     "match_number": 4,
@@ -65,7 +71,9 @@
     "prob_btts": 0.825,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": 4,
+    "real_score_away": 1
   },
   {
     "match_number": 5,
@@ -82,7 +90,9 @@
     "prob_btts": 0.777,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": 0,
+    "real_score_away": 1
   },
   {
     "match_number": 6,
@@ -99,7 +109,9 @@
     "prob_btts": 0.745,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": 2,
+    "real_score_away": 0
   },
   {
     "match_number": 7,
@@ -116,7 +128,9 @@
     "prob_btts": 0.585,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": 1,
+    "real_score_away": 1
   },
   {
     "match_number": 8,
@@ -133,7 +147,9 @@
     "prob_btts": 0.636,
     "predicted_score_home": 1,
     "predicted_score_away": 4,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": 1,
+    "real_score_away": 1
   },
   {
     "match_number": 9,
@@ -150,7 +166,9 @@
     "prob_btts": 0.28,
     "predicted_score_home": 0,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 10,
@@ -167,7 +185,9 @@
     "prob_btts": 0.832,
     "predicted_score_home": 4,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 11,
@@ -184,7 +204,9 @@
     "prob_btts": 0.649,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 12,
@@ -201,7 +223,9 @@
     "prob_btts": 0.863,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 13,
@@ -218,7 +242,9 @@
     "prob_btts": 0.44,
     "predicted_score_home": 0,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 14,
@@ -235,7 +261,9 @@
     "prob_btts": 0.69,
     "predicted_score_home": 3,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 15,
@@ -252,7 +280,9 @@
     "prob_btts": 0.747,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 16,
@@ -269,7 +299,9 @@
     "prob_btts": 0.679,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 17,
@@ -286,7 +318,9 @@
     "prob_btts": 0.821,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 18,
@@ -303,7 +337,9 @@
     "prob_btts": 0.575,
     "predicted_score_home": 0,
     "predicted_score_away": 3,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 19,
@@ -320,7 +356,9 @@
     "prob_btts": 0.457,
     "predicted_score_home": 1,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 20,
@@ -337,7 +375,9 @@
     "prob_btts": 0.702,
     "predicted_score_home": 3,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 21,
@@ -354,7 +394,9 @@
     "prob_btts": 0.787,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 22,
@@ -371,7 +413,9 @@
     "prob_btts": 0.557,
     "predicted_score_home": 2,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 23,
@@ -388,7 +432,9 @@
     "prob_btts": 0.621,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 24,
@@ -405,7 +451,9 @@
     "prob_btts": 0.65,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 25,
@@ -422,7 +470,9 @@
     "prob_btts": 0.697,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 26,
@@ -439,7 +489,9 @@
     "prob_btts": 0.783,
     "predicted_score_home": 3,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 27,
@@ -456,7 +508,9 @@
     "prob_btts": 0.374,
     "predicted_score_home": 2,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 28,
@@ -473,7 +527,9 @@
     "prob_btts": 0.546,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 29,
@@ -490,7 +546,9 @@
     "prob_btts": 0.804,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 30,
@@ -507,7 +565,9 @@
     "prob_btts": 0.52,
     "predicted_score_home": 0,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 31,
@@ -524,7 +584,9 @@
     "prob_btts": 0.77,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 32,
@@ -541,7 +603,9 @@
     "prob_btts": 0.799,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 33,
@@ -558,7 +622,9 @@
     "prob_btts": 0.716,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 34,
@@ -575,7 +641,9 @@
     "prob_btts": 0.422,
     "predicted_score_home": 1,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 35,
@@ -592,7 +660,9 @@
     "prob_btts": 0.857,
     "predicted_score_home": 4,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 36,
@@ -609,7 +679,9 @@
     "prob_btts": 0.502,
     "predicted_score_home": 0,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 37,
@@ -626,7 +698,9 @@
     "prob_btts": 0.478,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 38,
@@ -643,7 +717,9 @@
     "prob_btts": 0.627,
     "predicted_score_home": 3,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 39,
@@ -660,7 +736,9 @@
     "prob_btts": 0.79,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 40,
@@ -677,7 +755,9 @@
     "prob_btts": 0.673,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 41,
@@ -694,7 +774,9 @@
     "prob_btts": 0.809,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 42,
@@ -711,7 +793,9 @@
     "prob_btts": 0.636,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 43,
@@ -728,7 +812,9 @@
     "prob_btts": 0.519,
     "predicted_score_home": 1,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 44,
@@ -745,7 +831,9 @@
     "prob_btts": 0.584,
     "predicted_score_home": 0,
     "predicted_score_away": 3,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 45,
@@ -762,7 +850,9 @@
     "prob_btts": 0.414,
     "predicted_score_home": 3,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 46,
@@ -779,7 +869,9 @@
     "prob_btts": 0.837,
     "predicted_score_home": 2,
     "predicted_score_away": 3,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 47,
@@ -796,7 +888,9 @@
     "prob_btts": 0.666,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 48,
@@ -813,7 +907,9 @@
     "prob_btts": 0.597,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 49,
@@ -830,7 +926,9 @@
     "prob_btts": 0.794,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 50,
@@ -847,7 +945,9 @@
     "prob_btts": 0.519,
     "predicted_score_home": 2,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 51,
@@ -864,7 +964,9 @@
     "prob_btts": 0.622,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 52,
@@ -881,7 +983,9 @@
     "prob_btts": 0.652,
     "predicted_score_home": 2,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 53,
@@ -898,7 +1002,9 @@
     "prob_btts": 0.613,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 54,
@@ -915,7 +1021,9 @@
     "prob_btts": 0.635,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 55,
@@ -932,7 +1040,9 @@
     "prob_btts": 0.642,
     "predicted_score_home": 1,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 56,
@@ -949,7 +1059,9 @@
     "prob_btts": 0.477,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 57,
@@ -966,7 +1078,9 @@
     "prob_btts": 0.636,
     "predicted_score_home": 3,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 58,
@@ -983,7 +1097,9 @@
     "prob_btts": 0.75,
     "predicted_score_home": 1,
     "predicted_score_away": 3,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 59,
@@ -1000,7 +1116,9 @@
     "prob_btts": 0.905,
     "predicted_score_home": 3,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 60,
@@ -1017,7 +1135,9 @@
     "prob_btts": 0.608,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 61,
@@ -1034,7 +1154,9 @@
     "prob_btts": 0.866,
     "predicted_score_home": 3,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 62,
@@ -1051,7 +1173,9 @@
     "prob_btts": 0.545,
     "predicted_score_home": 2,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 63,
@@ -1068,7 +1192,9 @@
     "prob_btts": 0.506,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 64,
@@ -1085,7 +1211,9 @@
     "prob_btts": 0.86,
     "predicted_score_home": 2,
     "predicted_score_away": 4,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 65,
@@ -1102,7 +1230,9 @@
     "prob_btts": 0.612,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 66,
@@ -1119,7 +1249,9 @@
     "prob_btts": 0.545,
     "predicted_score_home": 0,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 67,
@@ -1136,7 +1268,9 @@
     "prob_btts": 0.514,
     "predicted_score_home": 0,
     "predicted_score_away": 3,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 68,
@@ -1153,7 +1287,9 @@
     "prob_btts": 0.749,
     "predicted_score_home": 3,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 69,
@@ -1170,7 +1306,9 @@
     "prob_btts": 0.583,
     "predicted_score_home": 1,
     "predicted_score_away": 1,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 70,
@@ -1187,7 +1325,9 @@
     "prob_btts": 0.485,
     "predicted_score_home": 0,
     "predicted_score_away": 4,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 71,
@@ -1204,7 +1344,9 @@
     "prob_btts": 0.848,
     "predicted_score_home": 2,
     "predicted_score_away": 2,
-    "is_over_2_5_alert": 1
+    "is_over_2_5_alert": 1,
+    "real_score_home": null,
+    "real_score_away": null
   },
   {
     "match_number": 72,
@@ -1221,6 +1363,8 @@
     "prob_btts": 0.414,
     "predicted_score_home": 1,
     "predicted_score_away": 0,
-    "is_over_2_5_alert": 0
+    "is_over_2_5_alert": 0,
+    "real_score_home": null,
+    "real_score_away": null
   }
 ]
