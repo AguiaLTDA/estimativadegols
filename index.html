@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Previsão de Gols - Copa do Mundo 2026</title>
+    <title>Copa do Mundo - Previsão de resultados</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -839,13 +839,83 @@
         .match-item-card.match-played .match-item-header span {
             color: rgba(16, 185, 129, 0.6) !important;
         }
+
+        /* Styled Switch Toggle */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--card-border);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .3s;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-muted);
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(139, 92, 246, 0.2);
+            border-color: var(--accent-primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+            background-color: var(--accent-secondary);
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            user-select: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <header>
-            <h1>Copa do Mundo 2026</h1>
+            <h1>Copa do Mundo - Previsão de resultados</h1>
             <p class="subtitle">Base de Dados Preditiva das Seleções Qualificadas</p>
         </header>
 
@@ -955,6 +1025,14 @@
 
         <!-- TAB 2: FASE DE GRUPOS CRONOLÓGICA -->
         <div id="fase-grupos" class="tab-content">
+            <!-- Day Filter Toggle -->
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="onlySelectedDayToggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label" id="toggleLabel">Mostrar apenas jogos do dia selecionado</span>
+            </div>
             <div class="timeline-section" id="timelineSection"></div>
         </div>
 
@@ -985,6 +1063,11 @@
             </div>
             <div class="teams-grid" id="teamsGrid"></div>
         </div>
+        
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 2rem 0 1rem 0; margin-top: 3rem; border-top: 1px solid var(--card-border); font-size: 0.85rem; color: var(--text-muted);">
+            By Felipe Aguia
+        </footer>
     </div>
 
     <!-- Detailed Modal Overlay -->
@@ -1162,10 +1245,13 @@
             simResultsCard.style.display = 'block';
         }
 
+        compareBtn.addEventListener('click', simulateMatch);
+
         // Render Group Stage and Alerts timeline dynamically
         function renderGroupStageTimeline(selectedDate) {
             const timelineSection = document.getElementById('timelineSection');
             const alertsSection = document.getElementById('alertsSection');
+            const onlySelectedDay = document.getElementById('onlySelectedDayToggle').checked;
             
             timelineSection.innerHTML = '';
             alertsSection.innerHTML = '';
@@ -1193,58 +1279,71 @@
             document.getElementById('alertsBadge').innerText = activeAlertCount;
             
             // 1. Render main timeline
-            Object.keys(dateGroups).sort().forEach(date => {
-                const groupCard = document.createElement('div');
-                groupCard.className = 'timeline-date-group';
-                
-                // Format Date Label
-                const dateObj = new Date(date + 'T00:00:00');
-                const formattedDate = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                const isDayPlayed = date < selectedDate;
-                
-                let matchesHtml = '';
-                dateGroups[date].forEach(match => {
-                    const isMatchPlayed = match.date < selectedDate || match.real_home !== null;
-                    const cardClass = isMatchPlayed ? 'match-item-card match-played' : 'match-item-card';
-                    
-                    let realResultHtml = '';
-                    if (match.real_home !== null) {
-                        realResultHtml = `<div class="match-item-real-result">Resultado COPA 2026: <strong>${match.real_home} - ${match.real_away}</strong></div>`;
-                    } else if (isMatchPlayed) {
-                        realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>Pendente</strong></div>`;
-                    } else {
-                        realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>- (Agendado)</strong></div>`;
-                    }
-
-                    matchesHtml += `
-                        <div class="${cardClass}">
-                            <div class="match-item-header">
-                                <span>Jogo #${match.match_number} - Grupo ${match.group}</span>
-                                <span style="font-weight:600;">xG: ${match.exp_g_home.toFixed(2)} - ${match.exp_g_away.toFixed(2)}</span>
-                            </div>
-                            <div class="match-item-teams">
-                                <span>${match.home_team}</span>
-                                <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
-                                <span>${match.away_team}</span>
-                            </div>
-                            <div class="match-item-score-prediction">
-                                Placar Provável: <strong>${match.pred_home} - ${match.pred_away}</strong>
-                            </div>
-                            ${realResultHtml}
-                            <div class="match-item-footer-stats">
-                                <span>V/E/D: ${Math.round(match.prob_win_home*100)}%/${Math.round(match.prob_draw*100)}%/${Math.round(match.prob_win_away*100)}%</span>
-                                <span style="color: ${match.prob_over_2_5 >= 0.70 ? 'var(--pink-alert)' : 'var(--text-muted)'}">Over 2.5: <strong>${Math.round(match.prob_over_2_5*100)}%</strong></span>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                groupCard.innerHTML = `
-                    <div class="timeline-date-header" style="${isDayPlayed ? 'border-color: var(--success); color: var(--success);' : ''}">${formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}</div>
-                    <div class="match-row-grid">${matchesHtml}</div>
+            let datesToRender = Object.keys(dateGroups);
+            if (onlySelectedDay) {
+                datesToRender = datesToRender.filter(d => d === selectedDate);
+            }
+            
+            if (datesToRender.length === 0) {
+                timelineSection.innerHTML = `
+                    <div class="timeline-date-group" style="text-align:center; padding: 3rem; color: var(--text-muted);">
+                        Nenhuma partida agendada para esta data (${selectedDate}).
+                    </div>
                 `;
-                timelineSection.appendChild(groupCard);
-            });
+            } else {
+                datesToRender.sort().forEach(date => {
+                    const groupCard = document.createElement('div');
+                    groupCard.className = 'timeline-date-group';
+                    
+                    // Format Date Label
+                    const dateObj = new Date(date + 'T00:00:00');
+                    const formattedDate = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                    const isDayPlayed = date < selectedDate;
+                    
+                    let matchesHtml = '';
+                    dateGroups[date].forEach(match => {
+                        const isMatchPlayed = match.date < selectedDate || match.real_home !== null;
+                        const cardClass = isMatchPlayed ? 'match-item-card match-played' : 'match-item-card';
+                        
+                        let realResultHtml = '';
+                        if (match.real_home !== null) {
+                            realResultHtml = `<div class="match-item-real-result">Resultado COPA 2026: <strong>${match.real_home} - ${match.real_away}</strong></div>`;
+                        } else if (isMatchPlayed) {
+                            realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>Pendente</strong></div>`;
+                        } else {
+                            realResultHtml = `<div class="match-item-real-result waiting">Resultado COPA 2026: <strong>- (Agendado)</strong></div>`;
+                        }
+
+                        matchesHtml += `
+                            <div class="${cardClass}">
+                                <div class="match-item-header">
+                                    <span>Jogo #${match.match_number} - Grupo ${match.group}</span>
+                                    <span style="font-weight:600;">xG: ${match.exp_g_home.toFixed(2)} - ${match.exp_g_away.toFixed(2)}</span>
+                                </div>
+                                <div class="match-item-teams">
+                                    <span>${match.home_team}</span>
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
+                                    <span>${match.away_team}</span>
+                                </div>
+                                <div class="match-item-score-prediction">
+                                    Placar Provável: <strong>${match.pred_home} - ${match.pred_away}</strong>
+                                </div>
+                                ${realResultHtml}
+                                <div class="match-item-footer-stats">
+                                    <span>V/E/D: ${Math.round(match.prob_win_home*100)}%/${Math.round(match.prob_draw*100)}%/${Math.round(match.prob_win_away*100)}%</span>
+                                    <span style="color: ${match.prob_over_2_5 >= 0.70 ? 'var(--pink-alert)' : 'var(--text-muted)'}">Over 2.5: <strong>${Math.round(match.prob_over_2_5*100)}%</strong></span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    groupCard.innerHTML = `
+                        <div class="timeline-date-header" style="${isDayPlayed ? 'border-color: var(--success); color: var(--success);' : ''}">${formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}</div>
+                        <div class="match-row-grid">${matchesHtml}</div>
+                    `;
+                    timelineSection.appendChild(groupCard);
+                });
+            }
             
             // 2. Render alerts timeline
             if (activeAlertCount === 0) {
@@ -1489,6 +1588,17 @@
                 dateInput.value = newDate;
                 changeDate(newDate);
             }
+        });
+
+        // Setup toggle event listener
+        const dayToggle = document.getElementById('onlySelectedDayToggle');
+        dayToggle.addEventListener('change', () => {
+            renderGroupStageTimeline(dateInput.value);
+        });
+        
+        document.getElementById('toggleLabel').addEventListener('click', () => {
+            dayToggle.checked = !dayToggle.checked;
+            renderGroupStageTimeline(dateInput.value);
         });
 
         // Initialize selectors and view
