@@ -256,8 +256,8 @@
     "predicted_score_home": 0,
     "predicted_score_away": 1,
     "is_over_2_5_alert": 0,
-    "real_score_home": null,
-    "real_score_away": null
+    "real_score_home": 1,
+    "real_score_away": 1
   },
   {
     "match_number": 14,
@@ -276,8 +276,8 @@
     "predicted_score_home": 3,
     "predicted_score_away": 1,
     "is_over_2_5_alert": 1,
-    "real_score_home": null,
-    "real_score_away": null
+    "real_score_home": 0,
+    "real_score_away": 0
   },
   {
     "match_number": 15,
@@ -296,8 +296,8 @@
     "predicted_score_home": 2,
     "predicted_score_away": 1,
     "is_over_2_5_alert": 1,
-    "real_score_home": null,
-    "real_score_away": null
+    "real_score_home": 2,
+    "real_score_away": 2
   },
   {
     "match_number": 16,
@@ -316,8 +316,8 @@
     "predicted_score_home": 2,
     "predicted_score_away": 1,
     "is_over_2_5_alert": 1,
-    "real_score_home": null,
-    "real_score_away": null
+    "real_score_home": 1,
+    "real_score_away": 1
   },
   {
     "match_number": 17,
