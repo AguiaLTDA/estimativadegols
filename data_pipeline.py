@@ -148,6 +148,35 @@ def main():
     all_matches.sort(key=lambda x: x['date'])
     print(f"Loaded {len(all_matches)} total historical matches.")
 
+    # Load manual overrides/results from JSON for Elo calculation
+    manual_results = {}
+    real_results_json = "copa_2026_real_results.json"
+    if os.path.exists(real_results_json):
+        try:
+            with open(real_results_json, "r", encoding="utf-8") as f:
+                custom_res = json.load(f)
+                for m_num_str, scores in custom_res.items():
+                    m_num = int(m_num_str)
+                    manual_results[m_num] = {
+                        "home_score": int(scores["home_score"]),
+                        "away_score": int(scores["away_score"])
+                    }
+            print(f"Loaded {len(manual_results)} manual real results for Elo integration.")
+        except Exception as e:
+            print(f"Error loading custom real results from JSON: {e}")
+
+    # Map matchups from fixtures to match numbers for manual lookup
+    fixture_lookup = {}
+    if os.path.exists("fixtures.csv"):
+        with open("fixtures.csv", "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row['stage'] == 'group-stage':
+                    h_norm = normalize_name(row['home_team'])
+                    a_norm = normalize_name(row['away_team'])
+                    m_num = int(row['match_number'])
+                    fixture_lookup[(h_norm, a_norm)] = m_num
+
     # Initialize Elo ratings
     elo = {} # team -> Elo rating
     
@@ -157,21 +186,28 @@ def main():
     for idx, match in enumerate(all_matches):
         date_str = match['date']
         
-        # We only consider matches up to local date (June 14, 2026)
-        if date_str > "2026-06-14":
-            continue
-            
         home = normalize_name(match['home_team'])
         away = normalize_name(match['away_team'])
         
+        # Check if this is a Copa 2026 match and if we have a manual result for it
+        h_score_val = match['home_score']
+        a_score_val = match['away_score']
+        
+        if match['tournament'] == 'FIFA World Cup' and date_str >= '2026-06-11':
+            if (home, away) in fixture_lookup:
+                m_num = fixture_lookup[(home, away)]
+                if m_num in manual_results:
+                    h_score_val = str(manual_results[m_num]["home_score"])
+                    a_score_val = str(manual_results[m_num]["away_score"])
+                    
         # Skip matches without score
-        if not match['home_score'] or match['home_score'] == 'NA':
+        if not h_score_val or h_score_val == 'NA':
             continue
-        if not match['away_score'] or match['away_score'] == 'NA':
+        if not a_score_val or a_score_val == 'NA':
             continue
             
-        home_score = int(match['home_score'])
-        away_score = int(match['away_score'])
+        home_score = int(h_score_val)
+        away_score = int(a_score_val)
         
         # Initialize Elo if not present
         if home not in elo:
