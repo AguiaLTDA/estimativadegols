@@ -4,6 +4,8 @@ import os
 
 def generate_html():
     print("Generating HTML dashboard...")
+    from datetime import datetime, timezone, timedelta
+    last_update_str = datetime.now(timezone(timedelta(hours=-3))).strftime("%d/%m/%Y %H:%M") + " BRT"
     
     # 1. Load team summaries
     with open("world_cup_2026_teams.json", "r", encoding="utf-8") as f:
@@ -143,6 +145,14 @@ def generate_html():
         p.subtitle {{
             color: var(--text-muted);
             font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }}
+
+        .last-update {{
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin-top: 0.25rem;
         }}
 
         /* Navigation Tabs */
@@ -998,6 +1008,7 @@ def generate_html():
         <header>
             <h1>Copa do Mundo - Previsão de resultados</h1>
             <p class="subtitle">Base de Dados Preditiva das Seleções Qualificadas</p>
+            <p class="last-update">Última atualização: {last_update_str}</p>
         </header>
 
         <!-- Time Control Panel -->
