@@ -110,9 +110,9 @@ def run_validation():
         # Verify team_matches count
         cursor.execute("SELECT COUNT(*) FROM team_matches")
         matches_count = cursor.fetchone()[0]
-        # Should be exactly 48 teams * 20 matches = 960 rows
-        if matches_count != 960:
-            print(f"WARNING: SQLite team_matches has {matches_count} rows (expected 960 if all teams have 20 matches).")
+        # Should be exactly 48 teams * 40 matches = 1920 rows
+        if matches_count != 1920:
+            print(f"WARNING: SQLite team_matches has {matches_count} rows (expected 1920 if all teams have 40 matches).")
         else:
             print(f"OK: SQLite team_matches has exactly {matches_count} rows.")
             

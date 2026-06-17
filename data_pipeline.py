@@ -4,6 +4,7 @@ import sqlite3
 import os
 import re
 import math
+from datetime import datetime
 
 # Poisson probability helper
 def poisson_probability(k, lam):
@@ -307,6 +308,23 @@ def main():
     )
     """)
     
+    # Load market values
+    market_values = {}
+    if os.path.exists("market_values.json"):
+        try:
+            with open("market_values.json", "r", encoding="utf-8") as f:
+                market_values = json.load(f)
+            print(f"Loaded {len(market_values)} team market values.")
+        except Exception as e:
+            print(f"Error loading market_values.json: {e}")
+            
+    # Compute average market value for baseline
+    if market_values:
+        avg_market_value = sum(market_values.values()) / len(market_values)
+    else:
+        avg_market_value = 1.0
+    print(f"Average team market value: {avg_market_value:.2f}M €")
+    
     # Process each qualified team
     for team in sorted(qualified_teams):
         # Filter matches where this team played
@@ -318,21 +336,43 @@ def main():
         # Sort by date ascending to get recent ones at the end
         team_matches.sort(key=lambda x: x['date'])
         
-        # Take the last 20 matches
+        # Take the last 40 matches
         N = len(team_matches)
-        if N > 20:
-            team_matches = team_matches[-20:]
-            N = 20
+        if N > 40:
+            team_matches = team_matches[-40:]
+            N = len(team_matches)
             
         if N == 0:
             print(f"Warning: No matches found for {team} before June 14, 2026!")
             continue
             
-        # Compute weights
+        # Compute weights based on time-decay and tournament significance
         weights = []
-        for i in range(1, N + 1):
-            w = 0.40 + 0.60 * (i - 1) / max(1, N - 1)
-            weights.append(w)
+        ref_date = datetime(2026, 6, 11)
+        for m in team_matches:
+            try:
+                m_date = datetime.strptime(m['date'], "%Y-%m-%d")
+                days_ago = (ref_date - m_date).days
+                if days_ago < 0:
+                    days_ago = 0
+            except Exception:
+                days_ago = 547
+                
+            # Time-decay: half-life of 1.5 years (547 days)
+            time_decay = 0.5 ** (days_ago / 547.0)
+            
+            # Tournament significance
+            tourney = m['tournament'].lower()
+            if 'fifa world cup' in tourney:
+                tourney_weight = 2.0
+            elif any(x in tourney for x in ['copa américa', 'copa america', 'uefa european championship', 'conmebol', 'uefa', 'qualifiers', 'qualification']):
+                tourney_weight = 1.5
+            elif 'friendly' in tourney:
+                tourney_weight = 0.5
+            else:
+                tourney_weight = 1.0
+                
+            weights.append(time_decay * tourney_weight)
             
         sum_weights = sum(weights)
         
@@ -424,6 +464,15 @@ def main():
         # If opponents are stronger, attack strength is amplified and defense strength is minimized (improved)
         attack_strength = avg_goals_scored * opp_factor
         defense_strength = avg_goals_conceded / opp_factor
+        
+        # Market value adjustment (compressed with power of 0.12)
+        team_value = market_values.get(team, 50.0) # default to 50M if team is missing
+        market_factor = team_value / avg_market_value
+        market_adj = market_factor ** 0.12
+        
+        # Adjust values to reward high market values and adjust lower ones
+        attack_strength = attack_strength * market_adj
+        defense_strength = defense_strength / market_adj
         
         # Get team's current status (as of June 14, 2026)
         current_elo = elo.get(team, 1500.0)
