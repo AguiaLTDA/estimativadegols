@@ -1,3 +1,4 @@
+from datetime import datetime
 import urllib.request
 import urllib.parse
 import json
@@ -144,6 +145,21 @@ def main():
         except subprocess.CalledProcessError as e:
             print("Error executing data_pipeline.py:")
             print(e.stderr)
+            return
+            
+        # Commit and push to GitHub automatically
+        print("Committing and pushing updates to GitHub...")
+        try:
+            # Add changes
+            subprocess.run(["git", "add", "."], check=True)
+            # Commit changes
+            commit_msg = f"Auto-update match results and dashboard: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+            subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+            # Push changes
+            subprocess.run(["git", "push"], check=True)
+            print("Successfully committed and pushed changes to GitHub.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error during git operations: {e}")
     else:
         print("No new results or updates found. Database is up to date.")
 
