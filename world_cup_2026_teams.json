@@ -128,16 +128,16 @@
   {
     "team": "Colombia",
     "fifa_rank": 13,
-    "elo": 2064,
-    "form_index": 48.2,
-    "attack_strength": 2.2,
-    "defense_strength": 0.82,
-    "weighted_win_rate": 0.49,
-    "weighted_draw_rate": 0.29,
-    "weighted_loss_rate": 0.22,
-    "opponent_strength": 1916,
-    "weighted_goals_scored": 1.87,
-    "weighted_goals_conceded": 0.97
+    "elo": 2082,
+    "form_index": 48.9,
+    "attack_strength": 2.29,
+    "defense_strength": 0.83,
+    "weighted_win_rate": 0.53,
+    "weighted_draw_rate": 0.27,
+    "weighted_loss_rate": 0.21,
+    "opponent_strength": 1909,
+    "weighted_goals_scored": 1.95,
+    "weighted_goals_conceded": 0.98
   },
   {
     "team": "Croatia",
@@ -660,15 +660,15 @@
   {
     "team": "Uzbekistan",
     "fifa_rank": 61,
-    "elo": 1822,
-    "form_index": 52.5,
-    "attack_strength": 1.23,
-    "defense_strength": 0.87,
-    "weighted_win_rate": 0.54,
-    "weighted_draw_rate": 0.35,
-    "weighted_loss_rate": 0.11,
-    "opponent_strength": 1648,
-    "weighted_goals_scored": 1.53,
-    "weighted_goals_conceded": 0.7
+    "elo": 1804,
+    "form_index": 51.4,
+    "attack_strength": 1.21,
+    "defense_strength": 1.08,
+    "weighted_win_rate": 0.49,
+    "weighted_draw_rate": 0.32,
+    "weighted_loss_rate": 0.18,
+    "opponent_strength": 1680,
+    "weighted_goals_scored": 1.47,
+    "weighted_goals_conceded": 0.88
   }
 ]
