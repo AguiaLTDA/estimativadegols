@@ -170,16 +170,16 @@
   {
     "team": "Czech Republic",
     "fifa_rank": 43,
-    "elo": 1772,
-    "form_index": 47.3,
-    "attack_strength": 1.82,
-    "defense_strength": 1.29,
-    "weighted_win_rate": 0.44,
-    "weighted_draw_rate": 0.31,
-    "weighted_loss_rate": 0.25,
-    "opponent_strength": 1642,
-    "weighted_goals_scored": 1.9,
-    "weighted_goals_conceded": 1.23
+    "elo": 1763,
+    "form_index": 47.0,
+    "attack_strength": 1.76,
+    "defense_strength": 1.27,
+    "weighted_win_rate": 0.41,
+    "weighted_draw_rate": 0.36,
+    "weighted_loss_rate": 0.23,
+    "opponent_strength": 1644,
+    "weighted_goals_scored": 1.83,
+    "weighted_goals_conceded": 1.22
   },
   {
     "team": "DR Congo",
@@ -534,16 +534,16 @@
   {
     "team": "South Africa",
     "fifa_rank": 46,
-    "elo": 1658,
-    "form_index": 47.5,
-    "attack_strength": 1.08,
+    "elo": 1667,
+    "form_index": 48.4,
+    "attack_strength": 1.07,
     "defense_strength": 1.29,
-    "weighted_win_rate": 0.44,
-    "weighted_draw_rate": 0.33,
-    "weighted_loss_rate": 0.23,
-    "opponent_strength": 1566,
-    "weighted_goals_scored": 1.49,
-    "weighted_goals_conceded": 0.93
+    "weighted_win_rate": 0.41,
+    "weighted_draw_rate": 0.37,
+    "weighted_loss_rate": 0.22,
+    "opponent_strength": 1581,
+    "weighted_goals_scored": 1.47,
+    "weighted_goals_conceded": 0.94
   },
   {
     "team": "South Korea",
