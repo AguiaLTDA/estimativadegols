@@ -366,16 +366,16 @@
   {
     "team": "Mexico",
     "fifa_rank": 15,
-    "elo": 1985,
-    "form_index": 53.1,
-    "attack_strength": 1.57,
-    "defense_strength": 0.63,
-    "weighted_win_rate": 0.63,
-    "weighted_draw_rate": 0.21,
-    "weighted_loss_rate": 0.16,
-    "opponent_strength": 1798,
-    "weighted_goals_scored": 1.51,
-    "weighted_goals_conceded": 0.65
+    "elo": 2001,
+    "form_index": 54.0,
+    "attack_strength": 1.52,
+    "defense_strength": 0.57,
+    "weighted_win_rate": 0.66,
+    "weighted_draw_rate": 0.19,
+    "weighted_loss_rate": 0.15,
+    "opponent_strength": 1811,
+    "weighted_goals_scored": 1.46,
+    "weighted_goals_conceded": 0.6
   },
   {
     "team": "Morocco",
@@ -548,16 +548,16 @@
   {
     "team": "South Korea",
     "fifa_rank": 22,
-    "elo": 1904,
-    "form_index": 51.7,
-    "attack_strength": 2.05,
-    "defense_strength": 0.8,
-    "weighted_win_rate": 0.65,
-    "weighted_draw_rate": 0.27,
-    "weighted_loss_rate": 0.07,
-    "opponent_strength": 1641,
-    "weighted_goals_scored": 2.15,
-    "weighted_goals_conceded": 0.76
+    "elo": 1888,
+    "form_index": 50.7,
+    "attack_strength": 1.92,
+    "defense_strength": 0.81,
+    "weighted_win_rate": 0.61,
+    "weighted_draw_rate": 0.25,
+    "weighted_loss_rate": 0.14,
+    "opponent_strength": 1667,
+    "weighted_goals_scored": 1.99,
+    "weighted_goals_conceded": 0.78
   },
   {
     "team": "Spain",
