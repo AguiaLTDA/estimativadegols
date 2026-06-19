@@ -317,10 +317,12 @@ def main():
         prob_win_home REAL,
         prob_draw REAL,
         prob_win_away REAL,
+        prob_over_1_5 REAL,
         prob_over_2_5 REAL,
         prob_btts REAL,
         predicted_score_home INTEGER,
         predicted_score_away INTEGER,
+        is_over_1_5_alert INTEGER,
         is_over_2_5_alert INTEGER,
         real_goals_home INTEGER,
         real_goals_away INTEGER,
@@ -622,6 +624,7 @@ def main():
                     lambda_a /= 1.10
                     
                 win_h, win_a, draw = 0.0, 0.0, 0.0
+                over_1_5 = 0.0
                 over_2_5 = 0.0
                 btts = 0.0
                 max_prob = -1.0
@@ -640,6 +643,8 @@ def main():
                         else:
                             draw += probXY
                             
+                        if x + y > 1:
+                            over_1_5 += probXY
                         if x + y > 2:
                             over_2_5 += probXY
                         if x > 0 and y > 0:
@@ -655,8 +660,9 @@ def main():
                 win_a /= sum_prob
                 draw /= sum_prob
                 
-                # Over 2.5 alert threshold is 70%
+                # Over 2.5 alert threshold is 70%, Over 1.5 alert threshold is 85%
                 is_alert = 1 if over_2_5 >= 0.70 else 0
+                is_alert_1_5 = 1 if over_1_5 >= 0.85 else 0
                 
                 # Check for real results
                 real_h = None
@@ -677,10 +683,12 @@ def main():
                     "prob_win_home": round(win_h, 3),
                     "prob_draw": round(draw, 3),
                     "prob_win_away": round(win_a, 3),
+                    "prob_over_1_5": round(over_1_5, 3),
                     "prob_over_2_5": round(over_2_5, 3),
                     "prob_btts": round(btts, 3),
                     "predicted_score_home": best_score[0],
                     "predicted_score_away": best_score[1],
+                    "is_over_1_5_alert": is_alert_1_5,
                     "is_over_2_5_alert": is_alert,
                     "real_score_home": real_h,
                     "real_score_away": real_a
@@ -692,14 +700,14 @@ def main():
                 INSERT INTO group_stage_simulations (
                     match_number, match_date, group_name, home_team, away_team,
                     expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
-                    prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert,
-                    real_goals_home, real_goals_away, kickoff_utc
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
+                    is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     match_num, date_str, group_name, home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
-                    round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], is_alert,
-                    real_h, real_a, kickoff_utc
+                    round(over_1_5, 3), round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], 
+                    is_alert_1_5, is_alert, real_h, real_a, kickoff_utc
                 ))
                 
     # Save simulations to JSON

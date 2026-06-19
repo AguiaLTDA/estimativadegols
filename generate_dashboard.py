@@ -49,8 +49,8 @@ def generate_html():
     cursor.execute("""
     SELECT match_number, match_date, group_name, home_team, away_team, 
            expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away, 
-           prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, is_over_2_5_alert,
-           real_goals_home, real_goals_away, kickoff_utc
+           prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
+           is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc
     FROM group_stage_simulations
     ORDER BY match_number ASC
     """)
@@ -68,14 +68,17 @@ def generate_html():
             "prob_win_home": row[7],
             "prob_draw": row[8],
             "prob_win_away": row[9],
-            "prob_over_2_5": row[10],
-            "prob_btts": row[11],
-            "pred_home": row[12],
-            "pred_away": row[13],
-            "is_alert": row[14],
-            "real_home": row[15],
-            "real_away": row[16],
-            "kickoff": row[17]
+            "prob_over_1_5": row[10],
+            "prob_over_2_5": row[11],
+            "prob_btts": row[12],
+            "pred_home": row[13],
+            "pred_away": row[14],
+            "is_alert_1_5": row[15],
+            "is_alert_2_5": row[16],
+            "is_alert": 1 if (row[15] or row[16]) else 0,
+            "real_home": row[17],
+            "real_away": row[18],
+            "kickoff": row[19]
         })
         
     conn.close()
@@ -103,6 +106,7 @@ def generate_html():
             --warning: #f59e0b;
             --danger: #ef4444;
             --pink-alert: #ec4899;
+            --cyan-alert: #06b6d4;
         }}
 
         * {{
@@ -531,13 +535,13 @@ def generate_html():
             100% {{ transform: scale(1); opacity: 1; }}
         }}
 
-        .alert-card-glow {{
+        .alert-card-glow-over25 {{
             position: relative;
             border: 1px solid rgba(236, 72, 153, 0.25) !important;
             background: rgba(236, 72, 153, 0.03) !important;
         }}
 
-        .alert-card-glow::after {{
+        .alert-card-glow-over25::after {{
             content: 'ALERTA 70%+ OVER 2.5';
             position: absolute;
             top: -10px;
@@ -551,8 +555,33 @@ def generate_html():
             box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
         }}
 
+        .alert-card-glow-over15 {{
+            position: relative;
+            border: 1px solid rgba(6, 182, 212, 0.25) !important;
+            background: rgba(6, 182, 212, 0.03) !important;
+        }}
+
+        .alert-card-glow-over15::after {{
+            content: 'ALERTA 85%+ OVER 1.5';
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: linear-gradient(to right, var(--cyan-alert), #0891b2);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+        }}
+
         .alert-value-highlight {{
             color: var(--pink-alert) !important;
+            font-weight: 700;
+        }}
+
+        .alert-value-highlight-over15 {{
+            color: var(--cyan-alert) !important;
             font-weight: 700;
         }}
 
@@ -1031,7 +1060,7 @@ def generate_html():
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab(event, 'simulador')">🔮 Simulador de Jogos</button>
             <button class="tab-btn" onclick="switchTab(event, 'fase-grupos')">📅 Fase de Grupos</button>
-            <button class="tab-btn alert-tab-btn" onclick="switchTab(event, 'alertas')">🚨 Alertas Over 2.5 <span id="alertsBadge" style="background: var(--pink-alert); color: #fff; padding: 0.1rem 0.4rem; border-radius: 6px; font-size: 0.75rem; margin-left: 0.3rem;">0</span></button>
+            <button class="tab-btn alert-tab-btn" onclick="switchTab(event, 'alertas')">🚨 Alertas de Gols <span id="alertsBadge" style="background: linear-gradient(135deg, var(--pink-alert), var(--cyan-alert)); color: #fff; padding: 0.1rem 0.4rem; border-radius: 6px; font-size: 0.75rem; margin-left: 0.3rem;">0</span></button>
             <button class="tab-btn" onclick="switchTab(event, 'selecoes')">🏳️  Diretório de Seleções</button>
         </div>
 
@@ -1090,6 +1119,11 @@ def generate_html():
                                 <span id="matchupStatValA_2">0%</span>
                                 <span style="color: var(--text-muted); font-size: 0.85rem;">Ambas Marcam (BTTS)</span>
                                 <span id="matchupStatValB_2">Sim</span>
+                            </div>
+                            <div class="metric-matchup-row">
+                                <span id="matchupStatValA_15">0%</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Mais de 1.5 Gols (Over 1.5)</span>
+                                <span id="matchupStatValB_15">Sim</span>
                             </div>
                             <div class="metric-matchup-row">
                                 <span id="matchupStatValA_3">0%</span>
@@ -1332,6 +1366,7 @@ def generate_html():
             document.getElementById('matchupStatValB_1').innerText = lambdaB.toFixed(2) + " xG";
             
             document.getElementById('matchupStatValA_2').innerText = (btts * 100).toFixed(1) + '%';
+            document.getElementById('matchupStatValA_15').innerText = (over1_5 * 100).toFixed(1) + '%';
             document.getElementById('matchupStatValA_3').innerText = (over2_5 * 100).toFixed(1) + '%';
             
             simResultsCard.style.display = 'block';
@@ -1395,7 +1430,14 @@ def generate_html():
                     let matchesHtml = '';
                     dateGroups[date].forEach(match => {{
                         const isMatchPlayed = match.date < selectedDate || match.real_home !== null;
-                        const cardClass = isMatchPlayed ? 'match-item-card match-played' : 'match-item-card';
+                        let cardClass = 'match-item-card';
+                        if (isMatchPlayed) {{
+                            cardClass += ' match-played';
+                        }} else if (match.prob_over_2_5 >= 0.70) {{
+                            cardClass += ' alert-card-glow-over25';
+                        }} else if (match.prob_over_1_5 >= 0.85) {{
+                            cardClass += ' alert-card-glow-over15';
+                        }}
                         
                         let realResultHtml = '';
                         if (match.real_home !== null) {{
@@ -1434,7 +1476,9 @@ def generate_html():
                                 ${{realResultHtml}}
                                 <div class="match-item-footer-stats">
                                     <span>V/E/D: ${{Math.round(match.prob_win_home*100)}}%/${{Math.round(match.prob_draw*100)}}%/${{Math.round(match.prob_win_away*100)}}%</span>
-                                    <span style="color: ${{match.prob_over_2_5 >= 0.70 ? 'var(--pink-alert)' : 'var(--text-muted)'}}">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
+                                    <span style="color: ${{match.prob_over_1_5 >= 0.85 ? 'var(--cyan-alert)' : 'var(--text-muted)'}}; font-weight: ${{match.prob_over_1_5 >= 0.85 ? '700' : 'normal'}}">Over 1.5: <strong>${{Math.round(match.prob_over_1_5*100)}}%</strong></span>
+                                    <span style="color: var(--text-muted);">|</span>
+                                    <span style="color: ${{match.prob_over_2_5 >= 0.70 ? 'var(--pink-alert)' : 'var(--text-muted)'}}; font-weight: ${{match.prob_over_2_5 >= 0.70 ? '700' : 'normal'}}">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
                                 </div>
                             </div>
                         `;
@@ -1452,7 +1496,7 @@ def generate_html():
             if (activeAlertCount === 0) {{
                 alertsSection.innerHTML += `
                     <div class="timeline-date-group" style="text-align:center; padding: 3rem; color: var(--text-muted);">
-                        Nenhum alerta ativo de Over 2.5 Gols após a data selecionada.
+                        Nenhum alerta ativo de gols (Over 1.5 ou Over 2.5) após a data selecionada.
                     </div>
                 `;
             }} else {{
@@ -1476,8 +1520,18 @@ def generate_html():
                             }}
                         }}
 
+                        let cardClass = 'match-item-card';
+                        let predictionStyle = '';
+                        if (match.prob_over_2_5 >= 0.70) {{
+                            cardClass += ' alert-card-glow-over25';
+                            predictionStyle = 'style="background: rgba(236, 72, 153, 0.08); border-color: rgba(236, 72, 153, 0.25);"';
+                        }} else if (match.prob_over_1_5 >= 0.85) {{
+                            cardClass += ' alert-card-glow-over15';
+                            predictionStyle = 'style="background: rgba(6, 182, 212, 0.08); border-color: rgba(6, 182, 212, 0.25);"';
+                        }}
+
                         matchesHtml += `
-                            <div class="match-item-card alert-card-glow">
+                            <div class="${{cardClass}}">
                                 <div class="match-item-header">
                                     <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}${{kickoffTimeHtml}}</span>
                                     <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
@@ -1487,19 +1541,21 @@ def generate_html():
                                     <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
                                     <span>${{match.away_team}}</span>
                                 </div>
-                                <div class="match-item-score-prediction" style="background: rgba(236, 72, 153, 0.08); border-color: rgba(236, 72, 153, 0.25);">
+                                <div class="match-item-score-prediction" ${{predictionStyle}}>
                                     Placar Provável: <strong>${{match.pred_home}} - ${{match.pred_away}}</strong>
                                 </div>
                                 <div class="match-item-footer-stats">
                                     <span>V/E/D: ${{Math.round(match.prob_win_home*100)}}%/${{Math.round(match.prob_draw*100)}}%/${{Math.round(match.prob_win_away*100)}}%</span>
-                                    <span class="alert-value-highlight">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
+                                    <span class="${{match.prob_over_1_5 >= 0.85 ? 'alert-value-highlight-over15' : ''}}">Over 1.5: <strong>${{Math.round(match.prob_over_1_5*100)}}%</strong></span>
+                                    <span style="color: var(--text-muted);">|</span>
+                                    <span class="${{match.prob_over_2_5 >= 0.70 ? 'alert-value-highlight' : ''}}">Over 2.5: <strong>${{Math.round(match.prob_over_2_5*100)}}%</strong></span>
                                 </div>
                             </div>
                         `;
                     }});
                     
                     groupCard.innerHTML = `
-                        <div class="timeline-date-header" style="border-color: var(--pink-alert); color: var(--pink-alert);">${{formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}}</div>
+                        <div class="timeline-date-header" style="border-color: var(--accent-primary); color: var(--accent-primary);">${{formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}}</div>
                         <div class="match-row-grid">${{matchesHtml}}</div>
                     `;
                     alertsSection.appendChild(groupCard);

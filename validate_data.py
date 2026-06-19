@@ -141,14 +141,14 @@ def run_validation():
             print("FAILED: Found NULL values in group_stage_simulations.")
             conn.close()
             return False
-        # Verify columns real_goals_home, real_goals_away and kickoff_utc exist
+        # Verify columns real_goals_home, real_goals_away, kickoff_utc, prob_over_1_5, and is_over_1_5_alert exist
         cursor.execute("PRAGMA table_info(group_stage_simulations)")
         columns = [col[1] for col in cursor.fetchall()]
-        if "real_goals_home" not in columns or "real_goals_away" not in columns or "kickoff_utc" not in columns:
-            print("FAILED: SQLite group_stage_simulations is missing real result or kickoff columns.")
+        if "real_goals_home" not in columns or "real_goals_away" not in columns or "kickoff_utc" not in columns or "prob_over_1_5" not in columns or "is_over_1_5_alert" not in columns:
+            print("FAILED: SQLite group_stage_simulations is missing real result, kickoff or Over 1.5 columns.")
             conn.close()
             return False
-        print("OK: SQLite group_stage_simulations has real goals and kickoff columns.")
+        print("OK: SQLite group_stage_simulations has real goals, kickoff and Over 1.5 columns.")
         
         conn.close()
     except Exception as e:
@@ -168,12 +168,12 @@ def run_validation():
             return False
         print("OK: group_stage_simulations.json exists and contains 72 records.")
         
-        # Check that keys real_score_home, real_score_away and kickoff_utc are present in JSON
+        # Check that keys real_score_home, real_score_away, kickoff_utc, prob_over_1_5, and is_over_1_5_alert are present in JSON
         for sim in sim_data:
-            if "real_score_home" not in sim or "real_score_away" not in sim or "kickoff_utc" not in sim:
-                print(f"FAILED: Simulation record for match #{sim.get('match_number')} is missing real score or kickoff keys.")
+            if "real_score_home" not in sim or "real_score_away" not in sim or "kickoff_utc" not in sim or "prob_over_1_5" not in sim or "is_over_1_5_alert" not in sim:
+                print(f"FAILED: Simulation record for match #{sim.get('match_number')} is missing real score, kickoff, or Over 1.5 keys.")
                 return False
-        print("OK: group_stage_simulations.json has real score and kickoff keys on all records.")
+        print("OK: group_stage_simulations.json has real score, kickoff, and Over 1.5 keys on all records.")
     except Exception as e:
         print(f"FAILED: Could not parse {json_sim_path}: {e}")
         return False
