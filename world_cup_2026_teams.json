@@ -450,16 +450,16 @@
   {
     "team": "Paraguay",
     "fifa_rank": 30,
-    "elo": 1868,
-    "form_index": 56.0,
+    "elo": 1902,
+    "form_index": 57.6,
     "attack_strength": 1.07,
-    "defense_strength": 1.02,
-    "weighted_win_rate": 0.36,
-    "weighted_draw_rate": 0.3,
-    "weighted_loss_rate": 0.34,
+    "defense_strength": 0.94,
+    "weighted_win_rate": 0.41,
+    "weighted_draw_rate": 0.28,
+    "weighted_loss_rate": 0.32,
     "opponent_strength": 1921,
     "weighted_goals_scored": 0.99,
-    "weighted_goals_conceded": 1.1
+    "weighted_goals_conceded": 1.02
   },
   {
     "team": "Portugal",
@@ -618,16 +618,16 @@
   {
     "team": "Turkey",
     "fifa_rank": 26,
-    "elo": 1914,
-    "form_index": 55.0,
-    "attack_strength": 2.16,
-    "defense_strength": 1.12,
-    "weighted_win_rate": 0.63,
-    "weighted_draw_rate": 0.14,
-    "weighted_loss_rate": 0.23,
-    "opponent_strength": 1790,
-    "weighted_goals_scored": 1.89,
-    "weighted_goals_conceded": 1.28
+    "elo": 1880,
+    "form_index": 52.7,
+    "attack_strength": 2.03,
+    "defense_strength": 1.1,
+    "weighted_win_rate": 0.59,
+    "weighted_draw_rate": 0.13,
+    "weighted_loss_rate": 0.28,
+    "opponent_strength": 1798,
+    "weighted_goals_scored": 1.77,
+    "weighted_goals_conceded": 1.27
   },
   {
     "team": "United States",
