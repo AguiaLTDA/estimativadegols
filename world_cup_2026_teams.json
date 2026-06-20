@@ -394,16 +394,16 @@
   {
     "team": "Netherlands",
     "fifa_rank": 7,
-    "elo": 2012,
-    "form_index": 47.0,
-    "attack_strength": 3.07,
+    "elo": 2039,
+    "form_index": 47.9,
+    "attack_strength": 3.27,
     "defense_strength": 0.83,
-    "weighted_win_rate": 0.54,
-    "weighted_draw_rate": 0.33,
-    "weighted_loss_rate": 0.13,
-    "opponent_strength": 1736,
-    "weighted_goals_scored": 2.55,
-    "weighted_goals_conceded": 1.0
+    "weighted_win_rate": 0.56,
+    "weighted_draw_rate": 0.32,
+    "weighted_loss_rate": 0.12,
+    "opponent_strength": 1747,
+    "weighted_goals_scored": 2.7,
+    "weighted_goals_conceded": 1.01
   },
   {
     "team": "New Zealand",
@@ -576,16 +576,16 @@
   {
     "team": "Sweden",
     "fifa_rank": 34,
-    "elo": 1811,
-    "form_index": 52.0,
-    "attack_strength": 2.25,
-    "defense_strength": 1.41,
-    "weighted_win_rate": 0.48,
-    "weighted_draw_rate": 0.18,
-    "weighted_loss_rate": 0.34,
-    "opponent_strength": 1743,
-    "weighted_goals_scored": 2.07,
-    "weighted_goals_conceded": 1.53
+    "elo": 1784,
+    "form_index": 50.9,
+    "attack_strength": 2.19,
+    "defense_strength": 1.63,
+    "weighted_win_rate": 0.44,
+    "weighted_draw_rate": 0.17,
+    "weighted_loss_rate": 0.39,
+    "opponent_strength": 1762,
+    "weighted_goals_scored": 2.0,
+    "weighted_goals_conceded": 1.78
   },
   {
     "team": "Switzerland",
