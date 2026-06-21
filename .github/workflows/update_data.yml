@@ -2,8 +2,8 @@ name: Automatic World Cup Results Updater
 
 on:
   schedule:
-    # Runs at 00:00, 06:00, 12:00, and 18:00 UTC everyday (4x a day)
-    - cron: '0 */6 * * *'
+    # Runs every 2 hours (12x a day)
+    - cron: '0 */2 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:

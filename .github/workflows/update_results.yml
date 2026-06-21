@@ -7,7 +7,7 @@ on:
       - 'data_pipeline.py'
       - 'generate_dashboard.py'
   schedule:
-    - cron: '0 */4 * * *'  # Runs every 4 hours to check for updates (00:00, 04:00, 08:00, etc. UTC)
+    - cron: '0 */2 * * *'  # Runs every 2 hours (12x a day) to check for updates
   workflow_dispatch: # Allows manual run from GitHub Web UI
 
 permissions:
