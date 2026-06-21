@@ -58,16 +58,16 @@
   {
     "team": "Belgium",
     "fifa_rank": 9,
-    "elo": 1964,
-    "form_index": 45.3,
-    "attack_strength": 2.76,
-    "defense_strength": 0.79,
-    "weighted_win_rate": 0.49,
-    "weighted_draw_rate": 0.34,
-    "weighted_loss_rate": 0.17,
-    "opponent_strength": 1688,
-    "weighted_goals_scored": 2.45,
-    "weighted_goals_conceded": 0.89
+    "elo": 1957,
+    "form_index": 45.2,
+    "attack_strength": 2.63,
+    "defense_strength": 0.74,
+    "weighted_win_rate": 0.46,
+    "weighted_draw_rate": 0.38,
+    "weighted_loss_rate": 0.16,
+    "opponent_strength": 1697,
+    "weighted_goals_scored": 2.32,
+    "weighted_goals_conceded": 0.84
   },
   {
     "team": "Bosnia and Herzegovina",
@@ -296,16 +296,16 @@
   {
     "team": "Iran",
     "fifa_rank": 24,
-    "elo": 1885,
-    "form_index": 47.6,
-    "attack_strength": 1.66,
-    "defense_strength": 1.05,
-    "weighted_win_rate": 0.59,
-    "weighted_draw_rate": 0.31,
-    "weighted_loss_rate": 0.1,
-    "opponent_strength": 1609,
-    "weighted_goals_scored": 2.06,
-    "weighted_goals_conceded": 0.84
+    "elo": 1892,
+    "form_index": 48.3,
+    "attack_strength": 1.56,
+    "defense_strength": 0.95,
+    "weighted_win_rate": 0.55,
+    "weighted_draw_rate": 0.36,
+    "weighted_loss_rate": 0.09,
+    "opponent_strength": 1635,
+    "weighted_goals_scored": 1.91,
+    "weighted_goals_conceded": 0.78
   },
   {
     "team": "Iraq",
