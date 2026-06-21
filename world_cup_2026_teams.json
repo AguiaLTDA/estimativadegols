@@ -492,16 +492,16 @@
   {
     "team": "Saudi Arabia",
     "fifa_rank": 37,
-    "elo": 1713,
-    "form_index": 50.4,
-    "attack_strength": 0.88,
-    "defense_strength": 1.26,
-    "weighted_win_rate": 0.38,
-    "weighted_draw_rate": 0.31,
-    "weighted_loss_rate": 0.31,
-    "opponent_strength": 1685,
-    "weighted_goals_scored": 1.11,
-    "weighted_goals_conceded": 1.0
+    "elo": 1706,
+    "form_index": 50.0,
+    "attack_strength": 0.85,
+    "defense_strength": 1.49,
+    "weighted_win_rate": 0.34,
+    "weighted_draw_rate": 0.3,
+    "weighted_loss_rate": 0.36,
+    "opponent_strength": 1720,
+    "weighted_goals_scored": 1.04,
+    "weighted_goals_conceded": 1.21
   },
   {
     "team": "Scotland",
@@ -562,16 +562,16 @@
   {
     "team": "Spain",
     "fifa_rank": 2,
-    "elo": 2186,
-    "form_index": 50.7,
-    "attack_strength": 3.43,
-    "defense_strength": 0.58,
-    "weighted_win_rate": 0.7,
-    "weighted_draw_rate": 0.29,
+    "elo": 2193,
+    "form_index": 50.5,
+    "attack_strength": 3.54,
+    "defense_strength": 0.54,
+    "weighted_win_rate": 0.72,
+    "weighted_draw_rate": 0.27,
     "weighted_loss_rate": 0.01,
-    "opponent_strength": 1818,
-    "weighted_goals_scored": 2.63,
-    "weighted_goals_conceded": 0.76
+    "opponent_strength": 1809,
+    "weighted_goals_scored": 2.72,
+    "weighted_goals_conceded": 0.71
   },
   {
     "team": "Sweden",
