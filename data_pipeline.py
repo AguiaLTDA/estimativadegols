@@ -98,6 +98,85 @@ def get_fifa_rank(team, date_str, fifa_2022, fifa_2026, elo_val):
         return rank
     return get_approx_fifa_rank(elo_val)
 
+def get_team_state_before_match(team, match_num, fixtures_list, real_results):
+    played_count = 0
+    points = 0
+    goals_for = 0
+    goals_against = 0
+    wins = 0
+    draws = 0
+    losses = 0
+    
+    for f in fixtures_list:
+        if f['stage'] != 'group-stage':
+            continue
+        m_id = int(f['match_number'])
+        if m_id < match_num:
+            home = normalize_name(f['home_team'])
+            away = normalize_name(f['away_team'])
+            if home == team or away == team:
+                if m_id in real_results:
+                    played_count += 1
+                    res = real_results[m_id]
+                    is_home = (home == team)
+                    t_goals = res['home_score'] if is_home else res['away_score']
+                    o_goals = res['away_score'] if is_home else res['home_score']
+                    
+                    goals_for += t_goals
+                    goals_against += o_goals
+                    
+                    if t_goals > o_goals:
+                        points += 3
+                        wins += 1
+                    elif t_goals == o_goals:
+                        points += 1
+                        draws += 1
+                    else:
+                        losses += 1
+                        
+    return {
+        "played": played_count,
+        "points": points,
+        "goals_for": goals_for,
+        "goals_against": goals_against,
+        "goals_diff": goals_for - goals_against,
+        "wins": wins,
+        "draws": draws,
+        "losses": losses
+    }
+
+def calculate_gas_for_team(team_state, group_teams_states):
+    played = team_state["played"]
+    points = team_state["points"]
+    
+    if played == 0:
+        return 0.50, "Estreia no grupo"
+    elif played == 1:
+        if points == 0:
+            return 0.85, "precisa vencer, risco de eliminação"
+        elif points == 1:
+            return 0.75, "precisa se posicionar no grupo"
+        else:
+            return 0.60, "busca confirmar a classificação"
+    else: # played == 2 (rodada decisiva)
+        if points >= 6:
+            return 0.40, "classificado, busca liderança"
+        elif points == 4:
+            return 0.70, "precisa se posicionar no grupo"
+        elif points == 3:
+            return 0.85, "precisa fazer gols para classificar"
+        elif points == 2:
+            return 0.90, "precisa vencer e de saldo"
+        elif points == 1:
+            return 0.95, "jogo de vida ou morte, precisa vencer"
+        else: # points == 0
+            # Verificação de eliminação matemática do top 3 do grupo
+            sorted_group_points = sorted([ts["points"] for ts in group_teams_states], reverse=True)
+            if len(sorted_group_points) >= 3 and sorted_group_points[2] >= 4:
+                return 0.20, "eliminado, cumprir tabela"
+            else:
+                return 0.80, "chance remota, precisa golear"
+
 def main():
     print("Starting data pipeline execution...")
     
@@ -167,15 +246,24 @@ def main():
 
     # Map matchups from fixtures to match numbers for manual lookup
     fixture_lookup = {}
+    fixtures_list = []
+    group_teams_map = {}
     if os.path.exists("fixtures.csv"):
         with open("fixtures.csv", "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
+                fixtures_list.append(row)
                 if row['stage'] == 'group-stage':
                     h_norm = normalize_name(row['home_team'])
                     a_norm = normalize_name(row['away_team'])
                     m_num = int(row['match_number'])
                     fixture_lookup[(h_norm, a_norm)] = m_num
+                    
+                    g_name = row['group']
+                    if g_name not in group_teams_map:
+                        group_teams_map[g_name] = set()
+                    group_teams_map[g_name].add(h_norm)
+                    group_teams_map[g_name].add(a_norm)
 
     # Initialize Elo ratings
     elo = {} # team -> Elo rating
@@ -287,7 +375,6 @@ def main():
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
     
-    # Create SQLite tables
     cursor.execute("""
     CREATE TABLE teams_summary (
         team TEXT PRIMARY KEY,
@@ -301,7 +388,9 @@ def main():
         weighted_loss_rate REAL,
         opponent_strength REAL,
         weighted_goals_scored REAL,
-        weighted_goals_conceded REAL
+        weighted_goals_conceded REAL,
+        gas_next_match REAL,
+        gas_desc_next_match TEXT
     )
     """)
     
@@ -326,7 +415,12 @@ def main():
         is_over_2_5_alert INTEGER,
         real_goals_home INTEGER,
         real_goals_away INTEGER,
-        kickoff_utc TEXT
+        kickoff_utc TEXT,
+        gas_home REAL,
+        gas_away REAL,
+        gas_desc_home TEXT,
+        gas_desc_away TEXT,
+        is_gas_alert INTEGER
     )
     """)
     
@@ -535,9 +629,9 @@ def main():
         
         # Insert summary record into SQLite
         cursor.execute("""
-        INSERT INTO teams_summary (team, fifa_rank, elo, form_index, attack_strength, defense_strength, weighted_win_rate, weighted_draw_rate, weighted_loss_rate, opponent_strength, weighted_goals_scored, weighted_goals_conceded)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (team, current_fifa, int(round(current_elo)), round(avg_form_index, 1), round(attack_strength, 2), round(defense_strength, 2), round(avg_win_rate, 2), round(avg_draw_rate, 2), round(avg_loss_rate, 2), int(round(avg_opp_elo)), round(avg_goals_scored, 2), round(avg_goals_conceded, 2)))
+        INSERT INTO teams_summary (team, fifa_rank, elo, form_index, attack_strength, defense_strength, weighted_win_rate, weighted_draw_rate, weighted_loss_rate, opponent_strength, weighted_goals_scored, weighted_goals_conceded, gas_next_match, gas_desc_next_match)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (team, current_fifa, int(round(current_elo)), round(avg_form_index, 1), round(attack_strength, 2), round(defense_strength, 2), round(avg_win_rate, 2), round(avg_draw_rate, 2), round(avg_loss_rate, 2), int(round(avg_opp_elo)), round(avg_goals_scored, 2), round(avg_goals_conceded, 2), 0.0, ""))
         
     # 7. Simulate World Cup 2026 group stage matches
     print("Simulating World Cup 2026 group stage matches...")
@@ -671,6 +765,19 @@ def main():
                     real_h = real_results[match_num]["home_score"]
                     real_a = real_results[match_num]["away_score"]
                 
+                # Calculate states and motivation before this match
+                state_h = get_team_state_before_match(home, match_num, fixtures_list, real_results)
+                state_a = get_team_state_before_match(away, match_num, fixtures_list, real_results)
+                
+                group_teams = group_teams_map.get(group_name, set())
+                group_teams_states = []
+                for team_g in group_teams:
+                    group_teams_states.append(get_team_state_before_match(team_g, match_num, fixtures_list, real_results))
+                    
+                gas_h, gas_desc_h = calculate_gas_for_team(state_h, group_teams_states)
+                gas_a, gas_desc_a = calculate_gas_for_team(state_a, group_teams_states)
+                is_gas_alert = 1 if (gas_h >= 0.80 or gas_a >= 0.80) else 0
+                
                 sim_record = {
                     "match_number": match_num,
                     "date": date_str,
@@ -691,7 +798,12 @@ def main():
                     "is_over_1_5_alert": is_alert_1_5,
                     "is_over_2_5_alert": is_alert,
                     "real_score_home": real_h,
-                    "real_score_away": real_a
+                    "real_score_away": real_a,
+                    "gas_home": round(gas_h, 2),
+                    "gas_away": round(gas_a, 2),
+                    "gas_desc_home": gas_desc_h,
+                    "gas_desc_away": gas_desc_a,
+                    "is_gas_alert": is_gas_alert
                 }
                 group_simulations.append(sim_record)
                 
@@ -701,19 +813,53 @@ def main():
                     match_number, match_date, group_name, home_team, away_team,
                     expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
                     prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
-                    is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
+                    gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     match_num, date_str, group_name, home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
                     round(over_1_5, 3), round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], 
-                    is_alert_1_5, is_alert, real_h, real_a, kickoff_utc
+                    is_alert_1_5, is_alert, real_h, real_a, kickoff_utc,
+                    round(gas_h, 2), round(gas_a, 2), gas_desc_h, gas_desc_a, is_gas_alert
                 ))
                 
+    # After simulating all group stage matches, find the next unplayed match for each team
+    # and update `teams_summary` in SQLite and `world_cup_2026_teams.json` (consolidated_data)
+    for team_record in consolidated_data:
+        team_name = team_record["team"]
+        
+        # Find all simulated group matches for this team
+        team_sims = [sim for sim in group_simulations if sim["home_team"] == team_name or sim["away_team"] == team_name]
+        team_sims.sort(key=lambda x: x["match_number"])
+        
+        next_match = None
+        for sim in team_sims:
+            if sim["real_score_home"] is None:
+                next_match = sim
+                break
+                
+        if next_match is not None:
+            is_home = (next_match["home_team"] == team_name)
+            gas_val = next_match["gas_home"] if is_home else next_match["gas_away"]
+            gas_desc = next_match["gas_desc_home"] if is_home else next_match["gas_desc_away"]
+        else:
+            gas_val = 0.0
+            gas_desc = "Fase de grupos encerrada"
+            
+        team_record["gas_next_match"] = round(gas_val, 2)
+        team_record["gas_desc_next_match"] = gas_desc
+        
+        cursor.execute("""
+        UPDATE teams_summary
+        SET gas_next_match = ?, gas_desc_next_match = ?
+        WHERE team = ?
+        """, (round(gas_val, 2), gas_desc, team_name))
+        
     # Save simulations to JSON
     with open("group_stage_simulations.json", "w", encoding="utf-8") as f:
         json.dump(group_simulations, f, indent=2, ensure_ascii=False)
-
+        
     # Commit changes to SQLite
     conn.commit()
     conn.close()

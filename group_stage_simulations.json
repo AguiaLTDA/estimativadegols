@@ -19,7 +19,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 2,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 2,
@@ -41,7 +46,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 2,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 3,
@@ -63,7 +73,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 4,
@@ -85,7 +100,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 4,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 5,
@@ -107,7 +127,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 0,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 6,
@@ -129,7 +154,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 2,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 7,
@@ -151,7 +181,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 8,
@@ -173,7 +208,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 9,
@@ -195,7 +235,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 10,
@@ -217,7 +262,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 1,
     "real_score_home": 7,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 11,
@@ -239,7 +289,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 2,
-    "real_score_away": 2
+    "real_score_away": 2,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 12,
@@ -261,7 +316,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 5,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 13,
@@ -283,7 +343,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 14,
@@ -305,7 +370,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 0,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 15,
@@ -327,7 +397,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 2,
-    "real_score_away": 2
+    "real_score_away": 2,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 16,
@@ -349,7 +424,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 17,
@@ -371,7 +451,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 0,
     "real_score_home": 3,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 18,
@@ -393,7 +478,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 1,
-    "real_score_away": 4
+    "real_score_away": 4,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 19,
@@ -415,7 +505,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 3,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 20,
@@ -437,7 +532,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 3,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 21,
@@ -459,7 +559,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 22,
@@ -481,7 +586,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 4,
-    "real_score_away": 2
+    "real_score_away": 2,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 23,
@@ -503,7 +613,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 24,
@@ -525,7 +640,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 3
+    "real_score_away": 3,
+    "gas_home": 0.5,
+    "gas_away": 0.5,
+    "gas_desc_home": "Estreia no grupo",
+    "gas_desc_away": "Estreia no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 25,
@@ -547,7 +667,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 1,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 26,
@@ -569,7 +694,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 4,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.75,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 27,
@@ -591,7 +721,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 6,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.75,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 28,
@@ -613,7 +748,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 1,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.6,
+    "gas_away": 0.6,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 29,
@@ -635,7 +775,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 3,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.75,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 30,
@@ -657,7 +802,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 0,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.6,
+    "gas_away": 0.75,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 31,
@@ -679,7 +829,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 0,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 32,
@@ -701,7 +856,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 0,
     "real_score_home": 2,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.6,
+    "gas_away": 0.6,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 33,
@@ -723,7 +883,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 2,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.6,
+    "gas_away": 0.6,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 34,
@@ -745,7 +910,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": 0,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 35,
@@ -767,7 +937,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 5,
-    "real_score_away": 1
+    "real_score_away": 1,
+    "gas_home": 0.75,
+    "gas_away": 0.6,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 36,
@@ -789,7 +964,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 0,
-    "real_score_away": 4
+    "real_score_away": 4,
+    "gas_home": 0.85,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 1
   },
   {
     "match_number": 37,
@@ -811,7 +991,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 38,
@@ -833,7 +1018,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 4,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.75,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 39,
@@ -855,7 +1045,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": 0,
-    "real_score_away": 0
+    "real_score_away": 0,
+    "gas_home": 0.75,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 40,
@@ -877,7 +1072,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.75,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 41,
@@ -899,7 +1099,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.85,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 42,
@@ -921,7 +1126,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.85,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 43,
@@ -943,7 +1153,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.6,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 44,
@@ -965,7 +1180,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 45,
@@ -987,7 +1207,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.6,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 46,
@@ -1009,7 +1234,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 47,
@@ -1031,7 +1261,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 48,
@@ -1053,7 +1288,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.75,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 49,
@@ -1075,7 +1315,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.7,
+    "gas_desc_home": "precisa fazer gols para classificar",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 1
   },
   {
     "match_number": 50,
@@ -1097,7 +1342,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.7,
+    "gas_away": 0.8,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "chance remota, precisa golear",
+    "is_gas_alert": 1
   },
   {
     "match_number": 51,
@@ -1119,7 +1369,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.7,
+    "gas_away": 0.7,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 52,
@@ -1141,7 +1396,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.95,
+    "gas_away": 0.95,
+    "gas_desc_home": "jogo de vida ou morte, precisa vencer",
+    "gas_desc_away": "jogo de vida ou morte, precisa vencer",
+    "is_gas_alert": 1
   },
   {
     "match_number": 53,
@@ -1163,7 +1423,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.95,
+    "gas_away": 0.4,
+    "gas_desc_home": "jogo de vida ou morte, precisa vencer",
+    "gas_desc_away": "classificado, busca liderança",
+    "is_gas_alert": 1
   },
   {
     "match_number": 54,
@@ -1185,7 +1450,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.95,
+    "gas_away": 0.85,
+    "gas_desc_home": "jogo de vida ou morte, precisa vencer",
+    "gas_desc_away": "precisa fazer gols para classificar",
+    "is_gas_alert": 1
   },
   {
     "match_number": 55,
@@ -1207,7 +1477,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.95,
+    "gas_away": 0.85,
+    "gas_desc_home": "jogo de vida ou morte, precisa vencer",
+    "gas_desc_away": "precisa fazer gols para classificar",
+    "is_gas_alert": 1
   },
   {
     "match_number": 56,
@@ -1229,7 +1504,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.95,
+    "gas_away": 0.4,
+    "gas_desc_home": "jogo de vida ou morte, precisa vencer",
+    "gas_desc_away": "classificado, busca liderança",
+    "is_gas_alert": 1
   },
   {
     "match_number": 57,
@@ -1251,7 +1531,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.7,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa fazer gols para classificar",
+    "is_gas_alert": 1
   },
   {
     "match_number": 58,
@@ -1273,7 +1558,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.8,
+    "gas_away": 0.7,
+    "gas_desc_home": "chance remota, precisa golear",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 1
   },
   {
     "match_number": 59,
@@ -1295,7 +1585,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.8,
+    "gas_away": 0.4,
+    "gas_desc_home": "chance remota, precisa golear",
+    "gas_desc_away": "classificado, busca liderança",
+    "is_gas_alert": 1
   },
   {
     "match_number": 60,
@@ -1317,7 +1612,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa fazer gols para classificar",
+    "gas_desc_away": "precisa fazer gols para classificar",
+    "is_gas_alert": 1
   },
   {
     "match_number": 61,
@@ -1339,7 +1639,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.6,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 0
   },
   {
     "match_number": 62,
@@ -1361,7 +1666,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 63,
@@ -1383,7 +1693,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.9,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa vencer e de saldo",
+    "is_gas_alert": 1
   },
   {
     "match_number": 64,
@@ -1405,7 +1720,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.9,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa vencer e de saldo",
+    "is_gas_alert": 1
   },
   {
     "match_number": 65,
@@ -1427,7 +1747,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.95,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "jogo de vida ou morte, precisa vencer",
+    "is_gas_alert": 1
   },
   {
     "match_number": 66,
@@ -1449,7 +1774,12 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.7,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 67,
@@ -1471,7 +1801,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.6,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 68,
@@ -1493,7 +1828,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.6,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 69,
@@ -1515,7 +1855,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.6,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 70,
@@ -1537,7 +1882,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.85,
+    "gas_away": 0.6,
+    "gas_desc_home": "precisa vencer, risco de eliminação",
+    "gas_desc_away": "busca confirmar a classificação",
+    "is_gas_alert": 1
   },
   {
     "match_number": 71,
@@ -1559,7 +1909,12 @@
     "is_over_1_5_alert": 1,
     "is_over_2_5_alert": 1,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.6,
+    "gas_away": 0.75,
+    "gas_desc_home": "busca confirmar a classificação",
+    "gas_desc_away": "precisa se posicionar no grupo",
+    "is_gas_alert": 0
   },
   {
     "match_number": 72,
@@ -1581,6 +1936,11 @@
     "is_over_1_5_alert": 0,
     "is_over_2_5_alert": 0,
     "real_score_home": null,
-    "real_score_away": null
+    "real_score_away": null,
+    "gas_home": 0.75,
+    "gas_away": 0.85,
+    "gas_desc_home": "precisa se posicionar no grupo",
+    "gas_desc_away": "precisa vencer, risco de eliminação",
+    "is_gas_alert": 1
   }
 ]

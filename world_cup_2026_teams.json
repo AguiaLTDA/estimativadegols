@@ -11,7 +11,9 @@
     "weighted_loss_rate": 0.15,
     "opponent_strength": 1603,
     "weighted_goals_scored": 2.13,
-    "weighted_goals_conceded": 0.83
+    "weighted_goals_conceded": 0.83,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   },
   {
     "team": "Argentina",
@@ -25,7 +27,9 @@
     "weighted_loss_rate": 0.15,
     "opponent_strength": 1860,
     "weighted_goals_scored": 2.0,
-    "weighted_goals_conceded": 0.42
+    "weighted_goals_conceded": 0.42,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "Australia",
@@ -39,7 +43,9 @@
     "weighted_loss_rate": 0.19,
     "opponent_strength": 1690,
     "weighted_goals_scored": 1.88,
-    "weighted_goals_conceded": 0.66
+    "weighted_goals_conceded": 0.66,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa fazer gols para classificar"
   },
   {
     "team": "Austria",
@@ -53,7 +59,9 @@
     "weighted_loss_rate": 0.17,
     "opponent_strength": 1618,
     "weighted_goals_scored": 2.35,
-    "weighted_goals_conceded": 0.77
+    "weighted_goals_conceded": 0.77,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "Belgium",
@@ -67,7 +75,9 @@
     "weighted_loss_rate": 0.16,
     "opponent_strength": 1697,
     "weighted_goals_scored": 2.32,
-    "weighted_goals_conceded": 0.84
+    "weighted_goals_conceded": 0.84,
+    "gas_next_match": 0.9,
+    "gas_desc_next_match": "precisa vencer e de saldo"
   },
   {
     "team": "Bosnia and Herzegovina",
@@ -81,7 +91,9 @@
     "weighted_loss_rate": 0.35,
     "opponent_strength": 1695,
     "weighted_goals_scored": 1.38,
-    "weighted_goals_conceded": 1.6
+    "weighted_goals_conceded": 1.6,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "Brazil",
@@ -95,7 +107,9 @@
     "weighted_loss_rate": 0.24,
     "opponent_strength": 1903,
     "weighted_goals_scored": 1.61,
-    "weighted_goals_conceded": 0.92
+    "weighted_goals_conceded": 0.92,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Canada",
@@ -109,7 +123,9 @@
     "weighted_loss_rate": 0.13,
     "opponent_strength": 1767,
     "weighted_goals_scored": 1.82,
-    "weighted_goals_conceded": 0.79
+    "weighted_goals_conceded": 0.79,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Cape Verde",
@@ -123,7 +139,9 @@
     "weighted_loss_rate": 0.22,
     "opponent_strength": 1598,
     "weighted_goals_scored": 1.28,
-    "weighted_goals_conceded": 0.95
+    "weighted_goals_conceded": 0.95,
+    "gas_next_match": 0.75,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Colombia",
@@ -137,7 +155,9 @@
     "weighted_loss_rate": 0.21,
     "opponent_strength": 1909,
     "weighted_goals_scored": 1.95,
-    "weighted_goals_conceded": 0.98
+    "weighted_goals_conceded": 0.98,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "Croatia",
@@ -151,7 +171,9 @@
     "weighted_loss_rate": 0.24,
     "opponent_strength": 1722,
     "weighted_goals_scored": 2.12,
-    "weighted_goals_conceded": 1.14
+    "weighted_goals_conceded": 1.14,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   },
   {
     "team": "Curaçao",
@@ -165,7 +187,9 @@
     "weighted_loss_rate": 0.26,
     "opponent_strength": 1582,
     "weighted_goals_scored": 1.9,
-    "weighted_goals_conceded": 1.37
+    "weighted_goals_conceded": 1.37,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "Czech Republic",
@@ -179,7 +203,9 @@
     "weighted_loss_rate": 0.23,
     "opponent_strength": 1644,
     "weighted_goals_scored": 1.83,
-    "weighted_goals_conceded": 1.22
+    "weighted_goals_conceded": 1.22,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "DR Congo",
@@ -193,7 +219,9 @@
     "weighted_loss_rate": 0.18,
     "opponent_strength": 1623,
     "weighted_goals_scored": 1.27,
-    "weighted_goals_conceded": 0.59
+    "weighted_goals_conceded": 0.59,
+    "gas_next_match": 0.75,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Ecuador",
@@ -207,7 +235,9 @@
     "weighted_loss_rate": 0.16,
     "opponent_strength": 1880,
     "weighted_goals_scored": 0.8,
-    "weighted_goals_conceded": 0.41
+    "weighted_goals_conceded": 0.41,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "Egypt",
@@ -221,7 +251,9 @@
     "weighted_loss_rate": 0.11,
     "opponent_strength": 1594,
     "weighted_goals_scored": 1.49,
-    "weighted_goals_conceded": 0.66
+    "weighted_goals_conceded": 0.66,
+    "gas_next_match": 0.75,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "England",
@@ -235,7 +267,9 @@
     "weighted_loss_rate": 0.09,
     "opponent_strength": 1699,
     "weighted_goals_scored": 2.44,
-    "weighted_goals_conceded": 0.5
+    "weighted_goals_conceded": 0.5,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "France",
@@ -249,7 +283,9 @@
     "weighted_loss_rate": 0.14,
     "opponent_strength": 1809,
     "weighted_goals_scored": 2.31,
-    "weighted_goals_conceded": 0.9
+    "weighted_goals_conceded": 0.9,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "Germany",
@@ -263,7 +299,9 @@
     "weighted_loss_rate": 0.17,
     "opponent_strength": 1781,
     "weighted_goals_scored": 2.72,
-    "weighted_goals_conceded": 0.94
+    "weighted_goals_conceded": 0.94,
+    "gas_next_match": 0.4,
+    "gas_desc_next_match": "classificado, busca liderança"
   },
   {
     "team": "Ghana",
@@ -277,7 +315,9 @@
     "weighted_loss_rate": 0.29,
     "opponent_strength": 1598,
     "weighted_goals_scored": 1.57,
-    "weighted_goals_conceded": 0.96
+    "weighted_goals_conceded": 0.96,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "Haiti",
@@ -291,7 +331,9 @@
     "weighted_loss_rate": 0.36,
     "opponent_strength": 1602,
     "weighted_goals_scored": 1.84,
-    "weighted_goals_conceded": 1.31
+    "weighted_goals_conceded": 1.31,
+    "gas_next_match": 0.8,
+    "gas_desc_next_match": "chance remota, precisa golear"
   },
   {
     "team": "Iran",
@@ -305,7 +347,9 @@
     "weighted_loss_rate": 0.09,
     "opponent_strength": 1635,
     "weighted_goals_scored": 1.91,
-    "weighted_goals_conceded": 0.78
+    "weighted_goals_conceded": 0.78,
+    "gas_next_match": 0.9,
+    "gas_desc_next_match": "precisa vencer e de saldo"
   },
   {
     "team": "Iraq",
@@ -319,7 +363,9 @@
     "weighted_loss_rate": 0.27,
     "opponent_strength": 1634,
     "weighted_goals_scored": 1.29,
-    "weighted_goals_conceded": 1.03
+    "weighted_goals_conceded": 1.03,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   },
   {
     "team": "Ivory Coast",
@@ -333,7 +379,9 @@
     "weighted_loss_rate": 0.2,
     "opponent_strength": 1604,
     "weighted_goals_scored": 1.86,
-    "weighted_goals_conceded": 0.54
+    "weighted_goals_conceded": 0.54,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa fazer gols para classificar"
   },
   {
     "team": "Japan",
@@ -347,7 +395,9 @@
     "weighted_loss_rate": 0.09,
     "opponent_strength": 1685,
     "weighted_goals_scored": 2.88,
-    "weighted_goals_conceded": 0.57
+    "weighted_goals_conceded": 0.57,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Jordan",
@@ -361,7 +411,9 @@
     "weighted_loss_rate": 0.3,
     "opponent_strength": 1672,
     "weighted_goals_scored": 1.78,
-    "weighted_goals_conceded": 1.14
+    "weighted_goals_conceded": 1.14,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   },
   {
     "team": "Mexico",
@@ -375,7 +427,9 @@
     "weighted_loss_rate": 0.15,
     "opponent_strength": 1811,
     "weighted_goals_scored": 1.46,
-    "weighted_goals_conceded": 0.6
+    "weighted_goals_conceded": 0.6,
+    "gas_next_match": 0.4,
+    "gas_desc_next_match": "classificado, busca liderança"
   },
   {
     "team": "Morocco",
@@ -389,7 +443,9 @@
     "weighted_loss_rate": 0.0,
     "opponent_strength": 1626,
     "weighted_goals_scored": 2.32,
-    "weighted_goals_conceded": 0.32
+    "weighted_goals_conceded": 0.32,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Netherlands",
@@ -403,7 +459,9 @@
     "weighted_loss_rate": 0.12,
     "opponent_strength": 1747,
     "weighted_goals_scored": 2.7,
-    "weighted_goals_conceded": 1.01
+    "weighted_goals_conceded": 1.01,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "New Zealand",
@@ -417,7 +475,9 @@
     "weighted_loss_rate": 0.35,
     "opponent_strength": 1701,
     "weighted_goals_scored": 2.57,
-    "weighted_goals_conceded": 1.06
+    "weighted_goals_conceded": 1.06,
+    "gas_next_match": 0.75,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Norway",
@@ -431,7 +491,9 @@
     "weighted_loss_rate": 0.13,
     "opponent_strength": 1695,
     "weighted_goals_scored": 3.3,
-    "weighted_goals_conceded": 0.95
+    "weighted_goals_conceded": 0.95,
+    "gas_next_match": 0.6,
+    "gas_desc_next_match": "busca confirmar a classificação"
   },
   {
     "team": "Panama",
@@ -445,7 +507,9 @@
     "weighted_loss_rate": 0.23,
     "opponent_strength": 1641,
     "weighted_goals_scored": 1.64,
-    "weighted_goals_conceded": 1.08
+    "weighted_goals_conceded": 1.08,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   },
   {
     "team": "Paraguay",
@@ -459,7 +523,9 @@
     "weighted_loss_rate": 0.32,
     "opponent_strength": 1921,
     "weighted_goals_scored": 0.99,
-    "weighted_goals_conceded": 1.02
+    "weighted_goals_conceded": 1.02,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa fazer gols para classificar"
   },
   {
     "team": "Portugal",
@@ -473,7 +539,9 @@
     "weighted_loss_rate": 0.12,
     "opponent_strength": 1751,
     "weighted_goals_scored": 2.49,
-    "weighted_goals_conceded": 0.94
+    "weighted_goals_conceded": 0.94,
+    "gas_next_match": 0.75,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Qatar",
@@ -487,7 +555,9 @@
     "weighted_loss_rate": 0.35,
     "opponent_strength": 1646,
     "weighted_goals_scored": 1.43,
-    "weighted_goals_conceded": 1.78
+    "weighted_goals_conceded": 1.78,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "Saudi Arabia",
@@ -501,7 +571,9 @@
     "weighted_loss_rate": 0.36,
     "opponent_strength": 1720,
     "weighted_goals_scored": 1.04,
-    "weighted_goals_conceded": 1.21
+    "weighted_goals_conceded": 1.21,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "Scotland",
@@ -515,7 +587,9 @@
     "weighted_loss_rate": 0.37,
     "opponent_strength": 1800,
     "weighted_goals_scored": 1.53,
-    "weighted_goals_conceded": 1.21
+    "weighted_goals_conceded": 1.21,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa fazer gols para classificar"
   },
   {
     "team": "Senegal",
@@ -529,7 +603,9 @@
     "weighted_loss_rate": 0.13,
     "opponent_strength": 1614,
     "weighted_goals_scored": 2.03,
-    "weighted_goals_conceded": 0.66
+    "weighted_goals_conceded": 0.66,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   },
   {
     "team": "South Africa",
@@ -543,7 +619,9 @@
     "weighted_loss_rate": 0.22,
     "opponent_strength": 1581,
     "weighted_goals_scored": 1.47,
-    "weighted_goals_conceded": 0.94
+    "weighted_goals_conceded": 0.94,
+    "gas_next_match": 0.95,
+    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
   },
   {
     "team": "South Korea",
@@ -557,7 +635,9 @@
     "weighted_loss_rate": 0.14,
     "opponent_strength": 1667,
     "weighted_goals_scored": 1.99,
-    "weighted_goals_conceded": 0.78
+    "weighted_goals_conceded": 0.78,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa fazer gols para classificar"
   },
   {
     "team": "Spain",
@@ -571,7 +651,9 @@
     "weighted_loss_rate": 0.01,
     "opponent_strength": 1809,
     "weighted_goals_scored": 2.72,
-    "weighted_goals_conceded": 0.71
+    "weighted_goals_conceded": 0.71,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Sweden",
@@ -585,7 +667,9 @@
     "weighted_loss_rate": 0.39,
     "opponent_strength": 1762,
     "weighted_goals_scored": 2.0,
-    "weighted_goals_conceded": 1.78
+    "weighted_goals_conceded": 1.78,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa fazer gols para classificar"
   },
   {
     "team": "Switzerland",
@@ -599,7 +683,9 @@
     "weighted_loss_rate": 0.13,
     "opponent_strength": 1762,
     "weighted_goals_scored": 1.99,
-    "weighted_goals_conceded": 1.01
+    "weighted_goals_conceded": 1.01,
+    "gas_next_match": 0.7,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Tunisia",
@@ -613,7 +699,9 @@
     "weighted_loss_rate": 0.29,
     "opponent_strength": 1594,
     "weighted_goals_scored": 1.47,
-    "weighted_goals_conceded": 1.19
+    "weighted_goals_conceded": 1.19,
+    "gas_next_match": 0.8,
+    "gas_desc_next_match": "chance remota, precisa golear"
   },
   {
     "team": "Turkey",
@@ -627,7 +715,9 @@
     "weighted_loss_rate": 0.28,
     "opponent_strength": 1798,
     "weighted_goals_scored": 1.77,
-    "weighted_goals_conceded": 1.27
+    "weighted_goals_conceded": 1.27,
+    "gas_next_match": 0.8,
+    "gas_desc_next_match": "chance remota, precisa golear"
   },
   {
     "team": "United States",
@@ -641,7 +731,9 @@
     "weighted_loss_rate": 0.33,
     "opponent_strength": 1854,
     "weighted_goals_scored": 1.95,
-    "weighted_goals_conceded": 1.18
+    "weighted_goals_conceded": 1.18,
+    "gas_next_match": 0.4,
+    "gas_desc_next_match": "classificado, busca liderança"
   },
   {
     "team": "Uruguay",
@@ -655,7 +747,9 @@
     "weighted_loss_rate": 0.19,
     "opponent_strength": 1874,
     "weighted_goals_scored": 1.19,
-    "weighted_goals_conceded": 0.71
+    "weighted_goals_conceded": 0.71,
+    "gas_next_match": 0.75,
+    "gas_desc_next_match": "precisa se posicionar no grupo"
   },
   {
     "team": "Uzbekistan",
@@ -669,6 +763,8 @@
     "weighted_loss_rate": 0.18,
     "opponent_strength": 1680,
     "weighted_goals_scored": 1.47,
-    "weighted_goals_conceded": 0.88
+    "weighted_goals_conceded": 0.88,
+    "gas_next_match": 0.85,
+    "gas_desc_next_match": "precisa vencer, risco de eliminação"
   }
 ]
