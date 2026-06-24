@@ -82,18 +82,18 @@
   {
     "team": "Bosnia and Herzegovina",
     "fifa_rank": 56,
-    "elo": 1639,
-    "form_index": 55.9,
-    "attack_strength": 1.25,
-    "defense_strength": 1.76,
-    "weighted_win_rate": 0.29,
-    "weighted_draw_rate": 0.37,
-    "weighted_loss_rate": 0.35,
-    "opponent_strength": 1695,
-    "weighted_goals_scored": 1.38,
-    "weighted_goals_conceded": 1.6,
-    "gas_next_match": 0.95,
-    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
+    "elo": 1676,
+    "form_index": 56.7,
+    "attack_strength": 1.34,
+    "defense_strength": 1.74,
+    "weighted_win_rate": 0.33,
+    "weighted_draw_rate": 0.35,
+    "weighted_loss_rate": 0.33,
+    "opponent_strength": 1687,
+    "weighted_goals_scored": 1.48,
+    "weighted_goals_conceded": 1.58,
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Brazil",
@@ -124,8 +124,8 @@
     "opponent_strength": 1767,
     "weighted_goals_scored": 1.82,
     "weighted_goals_conceded": 0.79,
-    "gas_next_match": 0.7,
-    "gas_desc_next_match": "precisa se posicionar no grupo"
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Cape Verde",
@@ -546,18 +546,18 @@
   {
     "team": "Qatar",
     "fifa_rank": 49,
-    "elo": 1578,
-    "form_index": 48.1,
-    "attack_strength": 1.06,
-    "defense_strength": 2.4,
-    "weighted_win_rate": 0.37,
-    "weighted_draw_rate": 0.28,
-    "weighted_loss_rate": 0.35,
-    "opponent_strength": 1646,
-    "weighted_goals_scored": 1.43,
-    "weighted_goals_conceded": 1.78,
-    "gas_next_match": 0.95,
-    "gas_desc_next_match": "jogo de vida ou morte, precisa vencer"
+    "elo": 1541,
+    "form_index": 46.8,
+    "attack_strength": 0.95,
+    "defense_strength": 2.52,
+    "weighted_win_rate": 0.33,
+    "weighted_draw_rate": 0.27,
+    "weighted_loss_rate": 0.4,
+    "opponent_strength": 1653,
+    "weighted_goals_scored": 1.28,
+    "weighted_goals_conceded": 1.87,
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Saudi Arabia",
@@ -684,8 +684,8 @@
     "opponent_strength": 1762,
     "weighted_goals_scored": 1.99,
     "weighted_goals_conceded": 1.01,
-    "gas_next_match": 0.7,
-    "gas_desc_next_match": "precisa se posicionar no grupo"
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Tunisia",
