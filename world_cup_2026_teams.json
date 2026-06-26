@@ -34,18 +34,18 @@
   {
     "team": "Australia",
     "fifa_rank": 25,
-    "elo": 1913,
-    "form_index": 51.8,
-    "attack_strength": 1.55,
-    "defense_strength": 0.81,
-    "weighted_win_rate": 0.63,
-    "weighted_draw_rate": 0.17,
-    "weighted_loss_rate": 0.19,
-    "opponent_strength": 1690,
-    "weighted_goals_scored": 1.88,
-    "weighted_goals_conceded": 0.66,
-    "gas_next_match": 0.85,
-    "gas_desc_next_match": "precisa fazer gols para classificar"
+    "elo": 1912,
+    "form_index": 51.5,
+    "attack_strength": 1.45,
+    "defense_strength": 0.74,
+    "weighted_win_rate": 0.59,
+    "weighted_draw_rate": 0.23,
+    "weighted_loss_rate": 0.18,
+    "opponent_strength": 1704,
+    "weighted_goals_scored": 1.75,
+    "weighted_goals_conceded": 0.62,
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Austria",
@@ -514,18 +514,18 @@
   {
     "team": "Paraguay",
     "fifa_rank": 30,
-    "elo": 1902,
-    "form_index": 57.6,
-    "attack_strength": 1.07,
-    "defense_strength": 0.94,
-    "weighted_win_rate": 0.41,
-    "weighted_draw_rate": 0.28,
-    "weighted_loss_rate": 0.32,
-    "opponent_strength": 1921,
-    "weighted_goals_scored": 0.99,
-    "weighted_goals_conceded": 1.02,
-    "gas_next_match": 0.85,
-    "gas_desc_next_match": "precisa fazer gols para classificar"
+    "elo": 1903,
+    "form_index": 57.0,
+    "attack_strength": 0.99,
+    "defense_strength": 0.88,
+    "weighted_win_rate": 0.38,
+    "weighted_draw_rate": 0.33,
+    "weighted_loss_rate": 0.3,
+    "opponent_strength": 1920,
+    "weighted_goals_scored": 0.92,
+    "weighted_goals_conceded": 0.95,
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Portugal",
@@ -716,8 +716,8 @@
     "opponent_strength": 1798,
     "weighted_goals_scored": 1.77,
     "weighted_goals_conceded": 1.27,
-    "gas_next_match": 0.8,
-    "gas_desc_next_match": "chance remota, precisa golear"
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "United States",
@@ -732,8 +732,8 @@
     "opponent_strength": 1854,
     "weighted_goals_scored": 1.95,
     "weighted_goals_conceded": 1.18,
-    "gas_next_match": 0.4,
-    "gas_desc_next_match": "classificado, busca liderança"
+    "gas_next_match": 0.0,
+    "gas_desc_next_match": "Fase de grupos encerrada"
   },
   {
     "team": "Uruguay",
