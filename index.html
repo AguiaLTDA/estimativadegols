@@ -612,6 +612,16 @@
             opacity: 1;
         }
 
+        .clickable-team {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .clickable-team:hover {
+            color: var(--accent-secondary) !important;
+            text-decoration: underline;
+        }
+
         .team-header {
             display: flex;
             justify-content: space-between;
@@ -977,7 +987,7 @@
         <header>
             <h1>Copa do Mundo - Previsão de resultados</h1>
             <p class="subtitle">Base de Dados Preditiva das Seleções Qualificadas</p>
-            <p class="last-update">Última atualização: 28/06/2026 12:08 BRT</p>
+            <p class="last-update">Última atualização: 28/06/2026 12:39 BRT</p>
         </header>
 
         <!-- Time Control Panel -->
@@ -998,14 +1008,14 @@
 
         <!-- Navigation Tabs -->
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab(event, 'simulador')">🔮 Simulador de Jogos</button>
-            <button class="tab-btn" onclick="switchTab(event, 'fase-grupos')">📅 Fase de Grupos</button>
+            <button class="tab-btn" onclick="switchTab(event, 'simulador')">🔮 Simulador de Jogos</button>
+            <button class="tab-btn active" onclick="switchTab(event, 'fase-grupos')">📅 JOGOS COPA!</button>
             <button class="tab-btn alert-tab-btn" onclick="switchTab(event, 'alertas')">🚨 Alertas de Gols <span id="alertsBadge" style="background: linear-gradient(135deg, var(--pink-alert), var(--cyan-alert)); color: #fff; padding: 0.1rem 0.4rem; border-radius: 6px; font-size: 0.75rem; margin-left: 0.3rem;">0</span></button>
             <button class="tab-btn" onclick="switchTab(event, 'selecoes')">🏳️  Diretório de Seleções</button>
         </div>
 
         <!-- TAB 1: SIMULADOR DE JOGOS -->
-        <div id="simulador" class="tab-content active">
+        <div id="simulador" class="tab-content">
             <div class="simulator-section">
                 <div class="simulator-title">
                     Simular Confronto (Modelo de Poisson)
@@ -1091,7 +1101,7 @@
         </div>
 
         <!-- TAB 2: FASE DE GRUPOS CRONOLÓGICA -->
-        <div id="fase-grupos" class="tab-content">
+        <div id="fase-grupos" class="tab-content active">
             <!-- Day Filter Toggle -->
             <div class="toggle-container">
                 <label class="switch">
@@ -1309,8 +1319,12 @@
             winB /= sumP;
             draw /= sumP;
             
-            document.getElementById('labelTeamA').innerText = teamA;
-            document.getElementById('labelTeamB').innerText = teamB;
+            const labelA = document.getElementById('labelTeamA');
+            const labelB = document.getElementById('labelTeamB');
+            labelA.innerText = teamA;
+            labelA.onclick = () => openModal(teamA);
+            labelB.innerText = teamB;
+            labelB.onclick = () => openModal(teamB);
             
             document.getElementById('valWinA').innerText = (winA * 100).toFixed(1) + '%';
             document.getElementById('valDraw').innerText = (draw * 100).toFixed(1) + '%';
@@ -1438,9 +1452,9 @@
                                     <span style="font-weight:600;">xG: ${match.exp_g_home.toFixed(2)} - ${match.exp_g_away.toFixed(2)}</span>
                                 </div>
                                 <div class="match-item-teams">
-                                    <span>${match.home_team}</span>
+                                    <span class="clickable-team" onclick="openModal('${match.home_team}')">${match.home_team}</span>
                                     <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
-                                    <span>${match.away_team}</span>
+                                    <span class="clickable-team" onclick="openModal('${match.away_team}')">${match.away_team}</span>
                                 </div>
                                 <div class="match-item-score-prediction">
                                     Placar Provável: <strong>${match.pred_home} - ${match.pred_away}</strong>
@@ -1513,9 +1527,9 @@
                                     <span style="font-weight:600;">xG: ${match.exp_g_home.toFixed(2)} - ${match.exp_g_away.toFixed(2)}</span>
                                 </div>
                                 <div class="match-item-teams">
-                                    <span>${match.home_team}</span>
+                                    <span class="clickable-team" onclick="openModal('${match.home_team}')">${match.home_team}</span>
                                     <span style="color:var(--text-muted); font-size:0.8rem;">vs</span>
-                                    <span>${match.away_team}</span>
+                                    <span class="clickable-team" onclick="openModal('${match.away_team}')">${match.away_team}</span>
                                 </div>
                                 <div class="match-item-score-prediction" ${predictionStyle}>
                                     Placar Provável: <strong>${match.pred_home} - ${match.pred_away}</strong>
@@ -1634,6 +1648,10 @@
 
         // Modal Logic
         function openModal(teamName) {
+            if (!dbData[teamName]) {
+                console.warn("Team not found in dbData:", teamName);
+                return;
+            }
             const team = dbData[teamName];
             const sum = team.summary;
             
@@ -1682,11 +1700,14 @@
                 const row = document.createElement('tr');
                 const scoreStr = `${m.goals_scored} - ${m.goals_conceded}`;
                 
+                const opponentName = m.opponent;
+                const isOpponentClickable = dbData[opponentName] ? 'class="clickable-team" onclick="openModal('' + opponentName + '')"' : '';
+                
                 row.innerHTML = `
                     <td>${m.date}</td>
                     <td><span class="result-badge ${m.result.toLowerCase()}">${m.result}</span></td>
                     <td style="font-weight: 600;">${scoreStr}</td>
-                    <td style="font-weight: 500;">${m.opponent}</td>
+                    <td style="font-weight: 500;" ${isOpponentClickable}>${opponentName}</td>
                     <td>${m.competition}</td>
                     <td>${m.opp_elo}</td>
                     <td>#${m.opp_fifa_rank}</td>
@@ -1695,10 +1716,12 @@
                 matchesTableBody.appendChild(row);
             });
             
+            document.body.style.overflow = 'hidden';
             modalOverlay.classList.add('active');
         }
 
         function closeModal() {
+            document.body.style.overflow = '';
             modalOverlay.classList.remove('active');
         }
 
@@ -1769,9 +1792,24 @@
         // Initialize selectors and view
         populateSelectors();
         
-        // Initialize to June 15, 2026 by default
-        dateInput.value = "2026-06-15";
-        changeDate("2026-06-15");
+        // Initialize to today's date if within tournament range, otherwise default to first/last day
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+        
+        let initialDate = "2026-06-15";
+        if (todayStr >= dateInput.min && todayStr <= dateInput.max) {
+            initialDate = todayStr;
+        } else if (todayStr < dateInput.min) {
+            initialDate = dateInput.min;
+        } else {
+            initialDate = dateInput.max;
+        }
+        
+        dateInput.value = initialDate;
+        changeDate(initialDate);
         
         updateView();
     </script>
