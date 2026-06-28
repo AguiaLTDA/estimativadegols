@@ -77,7 +77,7 @@ def generate_html():
             "pred_away": row[14],
             "is_alert_1_5": row[15],
             "is_alert_2_5": row[16],
-            "is_alert": 1 if (row[15] or row[16] or row[24]) else 0,
+            "is_alert": 1 if (row[15] or row[16]) else 0,
             "real_home": row[17],
             "real_away": row[18],
             "kickoff": row[19],
@@ -1168,16 +1168,6 @@ def generate_html():
                                 <span style="color: var(--text-muted); font-size: 0.85rem;">Mais de 2.5 Gols (Over 2.5)</span>
                                 <span id="matchupStatValB_3">Sim</span>
                             </div>
-                            <div class="metric-matchup-row" style="flex-direction: column; gap: 0.2rem; align-items: stretch; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.8rem; margin-top: 0.8rem;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                    <span id="matchupStatValA_gas" style="font-weight: 600;">0%</span>
-                                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Gás do Time (Próximo Jogo)</span>
-                                    <span id="matchupStatValB_gas" style="font-weight: 600;">0%</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.75rem; color: var(--text-muted); font-style: italic;">
-                                    <span id="matchupStatDescA_gas" style="max-width: 45%; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
-                                    <span id="matchupStatDescB_gas" style="max-width: 45%; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
-                                </div>
                             </div>
                         </div>
 
@@ -1235,6 +1225,24 @@ def generate_html():
                     <option value="attack-desc">Força de Ataque</option>
                     <option value="defense-asc">Força de Defesa (Melhor)</option>
                 </select>
+            </div>
+            
+            <div class="legend-panel" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="font-weight: 600; color: var(--accent-secondary); margin-bottom: 0.2rem;">📋 Legenda Disciplinar (Cartões acumulados na Fase de Grupos)</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; color: var(--text-muted);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--success);"></span>
+                        <span><strong>Comportado:</strong> &le; 3 amarelos e 0 vermelhos</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #f59e0b;"></span>
+                        <span><strong>Neutro:</strong> 4 a 6 amarelos e 0 vermelhos</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--danger);"></span>
+                        <span><strong>Rebelde:</strong> &ge; 7 amarelos OU &ge; 1 vermelho</span>
+                    </div>
+                </div>
             </div>
             <div class="teams-grid" id="teamsGrid"></div>
         </div>
@@ -1429,31 +1437,7 @@ def generate_html():
             document.getElementById('matchupStatValA_15').innerText = (over1_5 * 100).toFixed(1) + '%';
             document.getElementById('matchupStatValA_3').innerText = (over2_5 * 100).toFixed(1) + '%';
             
-            const gasA = statsA.gas_next_match || 0;
-            const gasDescA = statsA.gas_desc_next_match || "-";
-            const gasB = statsB.gas_next_match || 0;
-            const gasDescB = statsB.gas_desc_next_match || "-";
-            
-            const valA_gas_elem = document.getElementById('matchupStatValA_gas');
-            const valB_gas_elem = document.getElementById('matchupStatValB_gas');
-            
-            valA_gas_elem.innerText = Math.round(gasA * 100) + '%';
-            valB_gas_elem.innerText = Math.round(gasB * 100) + '%';
-            
-            if (gasA >= 0.80) {{
-                valA_gas_elem.className = 'alert-value-highlight-gas';
-            }} else {{
-                valA_gas_elem.className = '';
-            }}
-            
-            if (gasB >= 0.80) {{
-                valB_gas_elem.className = 'alert-value-highlight-gas';
-            }} else {{
-                valB_gas_elem.className = '';
-            }}
-            
-            document.getElementById('matchupStatDescA_gas').innerText = gasDescA;
-            document.getElementById('matchupStatDescB_gas').innerText = gasDescB;
+            simResultsCard.style.display = 'block';
             
             simResultsCard.style.display = 'block';
         }}
@@ -1523,8 +1507,6 @@ def generate_html():
                             cardClass += ' alert-card-glow-over25';
                         }} else if (match.prob_over_1_5 >= 0.85) {{
                             cardClass += ' alert-card-glow-over15';
-                        }} else if (match.is_gas_alert === 1) {{
-                            cardClass += ' alert-card-glow-gas';
                         }}
                         
                         let realResultHtml = '';
@@ -1565,17 +1547,6 @@ def generate_html():
                                     🟨 ${{match.yc_home}} - ${{match.yc_away}} 🟨 ${{ (match.rc_home > 0 || match.rc_away > 0) ? ' | 🟥 ' + match.rc_home + ' - ' + match.rc_away + ' 🟥' : '' }}
                                 </div>
                                 ${{realResultHtml}}
-                                
-                                <div class="match-item-gas-prediction" style="margin: 0.5rem 0; font-size: 0.8rem; padding: 0.4rem 0.6rem; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 0.2rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="color: var(--text-muted);">${{match.home_team}}:</span>
-                                        <span class="${{match.gas_home >= 0.80 ? 'alert-value-highlight-gas' : ''}}" style="${{match.gas_home >= 0.80 ? '' : 'color: #fff;'}}">${{Math.round(match.gas_home*100)}}% <span style="font-size: 0.7rem; font-weight: normal; color: var(--text-muted); font-style: italic;">(${{match.gas_desc_home}})</span></span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="color: var(--text-muted);">${{match.away_team}}:</span>
-                                        <span class="${{match.gas_away >= 0.80 ? 'alert-value-highlight-gas' : ''}}" style="${{match.gas_away >= 0.80 ? '' : 'color: #fff;'}}">${{Math.round(match.gas_away*100)}}% <span style="font-size: 0.7rem; font-weight: normal; color: var(--text-muted); font-style: italic;">(${{match.gas_desc_away}})</span></span>
-                                    </div>
-                                </div>
 
                                 <div class="match-item-footer-stats">
                                     <span>V/E/D: ${{Math.round(match.prob_win_home*100)}}%/${{Math.round(match.prob_draw*100)}}%/${{Math.round(match.prob_win_away*100)}}%</span>
@@ -1631,9 +1602,6 @@ def generate_html():
                         }} else if (match.prob_over_1_5 >= 0.85) {{
                             cardClass += ' alert-card-glow-over15';
                             predictionStyle = 'style="background: rgba(6, 182, 212, 0.08); border-color: rgba(6, 182, 212, 0.25);"';
-                        }} else if (match.is_gas_alert === 1) {{
-                            cardClass += ' alert-card-glow-gas';
-                            predictionStyle = 'style="background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.25);"';
                         }}
 
                         matchesHtml += `
@@ -1653,16 +1621,6 @@ def generate_html():
                                 <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">
                                     🟨 ${{match.yc_home}} - ${{match.yc_away}} 🟨 ${{ (match.rc_home > 0 || match.rc_away > 0) ? ' | 🟥 ' + match.rc_home + ' - ' + match.rc_away + ' 🟥' : '' }}
                                 </div>
-                                
-                                <div class="match-item-gas-prediction" style="margin: 0.5rem 0; font-size: 0.8rem; padding: 0.4rem 0.6rem; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 0.2rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="color: var(--text-muted);">${{match.home_team}}:</span>
-                                        <span class="${{match.gas_home >= 0.80 ? 'alert-value-highlight-gas' : ''}}" style="${{match.gas_home >= 0.80 ? '' : 'color: #fff;'}}">${{Math.round(match.gas_home*100)}}% <span style="font-size: 0.7rem; font-weight: normal; color: var(--text-muted); font-style: italic;">(${{match.gas_desc_home}})</span></span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="color: var(--text-muted);">${{match.away_team}}:</span>
-                                        <span class="${{match.gas_away >= 0.80 ? 'alert-value-highlight-gas' : ''}}" style="${{match.gas_away >= 0.80 ? '' : 'color: #fff;'}}">${{Math.round(match.gas_away*100)}}% <span style="font-size: 0.7rem; font-weight: normal; color: var(--text-muted); font-style: italic;">(${{match.gas_desc_away}})</span></span>
-                                    </div>
                                 </div>
 
                                 <div class="match-item-footer-stats">
