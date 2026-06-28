@@ -5,6 +5,7 @@ import os
 import re
 import math
 from datetime import datetime
+import random
 
 # Poisson probability helper
 def poisson_probability(k, lam):
@@ -176,6 +177,293 @@ def calculate_gas_for_team(team_state, group_teams_states):
                 return 0.20, "eliminado, cumprir tabela"
             else:
                 return 0.80, "chance remota, precisa golear"
+
+import hashlib
+import functools
+
+def get_deterministic_cards(home_team, away_team, match_num):
+    seed_str = f"cards_wc_2026_{match_num}_{home_team}_{away_team}"
+    seed_val = int(hashlib.md5(seed_str.encode('utf-8')).hexdigest(), 16) % 10000000
+    rng = random.Random(seed_val)
+    
+    # Yellow cards probabilities: 0 (15%), 1 (30%), 2 (30%), 3 (15%), 4 (8%), 5 (2%)
+    yc_probs = [0, 1, 1, 2, 2, 2, 3, 3, 4, 5]
+    home_yc = rng.choice(yc_probs)
+    away_yc = rng.choice(yc_probs)
+    
+    # Red cards: 0 (95%), 1 (5%)
+    rc_probs = [0] * 19 + [1]
+    home_rc = rng.choice(rc_probs)
+    away_rc = rng.choice(rc_probs)
+    
+    return home_yc, away_yc, home_rc, away_rc
+
+def allocate_third_places(best_thirds):
+    slots = [
+        {"matchNumber": 74, "allowedGroups": ['A', 'B', 'C', 'D', 'F'], "opponentGroup": 'E'},
+        {"matchNumber": 77, "allowedGroups": ['C', 'D', 'F', 'G', 'H'], "opponentGroup": 'I'},
+        {"matchNumber": 79, "allowedGroups": ['C', 'E', 'F', 'H', 'I'], "opponentGroup": 'A'},
+        {"matchNumber": 80, "allowedGroups": ['E', 'H', 'I', 'J', 'K'], "opponentGroup": 'L'},
+        {"matchNumber": 81, "allowedGroups": ['B', 'E', 'F', 'I', 'J'], "opponentGroup": 'D'},
+        {"matchNumber": 82, "allowedGroups": ['A', 'E', 'H', 'I', 'J'], "opponentGroup": 'G'},
+        {"matchNumber": 85, "allowedGroups": ['E', 'F', 'G', 'I', 'J'], "opponentGroup": 'B'},
+        {"matchNumber": 87, "allowedGroups": ['D', 'E', 'I', 'J', 'L'], "opponentGroup": 'K'}
+    ]
+    assignment = {}
+    used_thirds = set()
+    
+    def backtrack(slot_idx):
+        if slot_idx == len(slots):
+            return True
+        slot = slots[slot_idx]
+        
+        # Try strict: third.group != opponentGroup
+        for i, third in enumerate(best_thirds):
+            if i in used_thirds:
+                continue
+            if third["group"] in slot["allowedGroups"] and third["group"] != slot["opponentGroup"]:
+                assignment[slot["matchNumber"]] = third["team"]
+                used_thirds.add(i)
+                if backtrack(slot_idx + 1):
+                    return True
+                used_thirds.remove(i)
+                if slot["matchNumber"] in assignment:
+                    del assignment[slot["matchNumber"]]
+                    
+        # Try relaxed: allow opponentGroup == third.group if strict fails
+        for i, third in enumerate(best_thirds):
+            if i in used_thirds:
+                continue
+            if third["group"] in slot["allowedGroups"]:
+                assignment[slot["matchNumber"]] = third["team"]
+                used_thirds.add(i)
+                if backtrack(slot_idx + 1):
+                    return True
+                used_thirds.remove(i)
+                if slot["matchNumber"] in assignment:
+                    del assignment[slot["matchNumber"]]
+        return False
+
+    if backtrack(0):
+        return assignment
+    else:
+        # Fallback
+        fallback = {}
+        for idx, slot in enumerate(slots):
+            if idx < len(best_thirds):
+                fallback[slot["matchNumber"]] = best_thirds[idx]["team"]
+        return fallback
+
+def compare_teams(a, b):
+    # 1. Points (higher is better)
+    if b["points"] != a["points"]:
+        return b["points"] - a["points"]
+    # 2. Goal Difference (higher is better)
+    if b["goalDifference"] != a["goalDifference"]:
+        return b["goalDifference"] - a["goalDifference"]
+    # 3. Goals Scored (higher is better)
+    if b["goalsFor"] != a["goalsFor"]:
+        return b["goalsFor"] - a["goalsFor"]
+    # 4. H2H points (higher is better)
+    a_h2h = a["headToHead"].get(b["team"], 0)
+    b_h2h = b["headToHead"].get(a["team"], 0)
+    if b_h2h != a_h2h:
+        return b_h2h - a_h2h
+    # 5. FIFA Rank (lower rank number is better)
+    return a["fifa_rank"] - b["fifa_rank"]
+
+def get_group_standings(group_simulations, consolidated_data, fixtures_list):
+    standings = {}
+    
+    # Initialize standings for all 48 teams
+    for team_data in consolidated_data:
+        team_name = team_data["team"]
+        standings[team_name] = {
+            "team": team_name,
+            "fifa_rank": team_data["fifa_rank"],
+            "elo": team_data["elo"],
+            "played": 0,
+            "points": 0,
+            "wins": 0,
+            "draws": 0,
+            "losses": 0,
+            "goalsFor": 0,
+            "goalsAgainst": 0,
+            "goalDifference": 0,
+            "headToHead": {}
+        }
+        
+    for sim in group_simulations:
+        home = sim["home_team"]
+        away = sim["away_team"]
+        
+        # Determine score
+        h_score = sim["real_score_home"]
+        a_score = sim["real_score_away"]
+        if h_score is None:
+            h_score = sim["predicted_score_home"]
+            a_score = sim["predicted_score_away"]
+            
+        if home not in standings or away not in standings:
+            continue
+            
+        standings[home]["played"] += 1
+        standings[away]["played"] += 1
+        standings[home]["goalsFor"] += h_score
+        standings[home]["goalsAgainst"] += a_score
+        standings[away]["goalsFor"] += a_score
+        standings[away]["goalsAgainst"] += h_score
+        
+        if h_score > a_score:
+            standings[home]["points"] += 3
+            standings[home]["wins"] += 1
+            standings[away]["losses"] += 1
+            standings[home]["headToHead"][away] = standings[home]["headToHead"].get(away, 0) + 3
+            standings[away]["headToHead"][home] = standings[away]["headToHead"].get(home, 0) + 0
+        elif h_score < a_score:
+            standings[away]["points"] += 3
+            standings[away]["wins"] += 1
+            standings[home]["losses"] += 1
+            standings[away]["headToHead"][home] = standings[away]["headToHead"].get(home, 0) + 3
+            standings[home]["headToHead"][away] = standings[home]["headToHead"].get(away, 0) + 0
+        else:
+            standings[home]["points"] += 1
+            standings[away]["points"] += 1
+            standings[home]["draws"] += 1
+            standings[away]["draws"] += 1
+            standings[home]["headToHead"][away] = standings[home]["headToHead"].get(away, 0) + 1
+            standings[away]["headToHead"][home] = standings[away]["headToHead"].get(home, 0) + 1
+            
+    for team in standings:
+        standings[team]["goalDifference"] = standings[team]["goalsFor"] - standings[team]["goalsAgainst"]
+        
+    groups = {}
+    for f in fixtures_list:
+        if f["stage"] == "group-stage":
+            g = f["group"]
+            if g not in groups:
+                groups[g] = set()
+            groups[g].add(normalize_name(f["home_team"]))
+            groups[g].add(normalize_name(f["away_team"]))
+            
+    group_standings = {}
+    for g, team_set in groups.items():
+        team_list = [standings[t] for t in team_set if t in standings]
+        team_list.sort(key=functools.cmp_to_key(compare_teams))
+        group_standings[g] = team_list
+        
+    return group_standings
+
+def get_best_third_placed_teams(group_standings):
+    thirds = []
+    for g, list_teams in group_standings.items():
+        if len(list_teams) >= 3:
+            thirds.append({
+                "group": g,
+                "team": list_teams[2]["team"],
+                "points": list_teams[2]["points"],
+                "goalDifference": list_teams[2]["goalDifference"],
+                "goalsFor": list_teams[2]["goalsFor"],
+                "wins": list_teams[2]["wins"],
+                "fifa_rank": list_teams[2]["fifa_rank"]
+            })
+            
+    def compare_thirds(a, b):
+        if b["points"] != a["points"]:
+            return b["points"] - a["points"]
+        if b["goalDifference"] != a["goalDifference"]:
+            return b["goalDifference"] - a["goalDifference"]
+        if b["goalsFor"] != a["goalsFor"]:
+            return b["goalsFor"] - a["goalsFor"]
+        if b["wins"] != a["wins"]:
+            return b["wins"] - a["wins"]
+        return a["fifa_rank"] - b["fifa_rank"]
+        
+    thirds.sort(key=functools.cmp_to_key(compare_thirds))
+    return thirds[:8]
+
+def resolve_r32_teams(match_num, group_standings, best_thirds_allocation):
+    def get_winner(g):
+        return group_standings.get(g, [None])[0]["team"] if group_standings.get(g) else f"1º Grupo {g}"
+    def get_runner(g):
+        return group_standings.get(g, [None, None])[1]["team"] if len(group_standings.get(g, [])) >= 2 else f"2º Grupo {g}"
+        
+    if match_num == 73:
+        return get_runner('A'), get_runner('B')
+    elif match_num == 74:
+        return get_winner('E'), best_thirds_allocation.get(74, '3º A/B/C/D/F')
+    elif match_num == 75:
+        return get_winner('F'), get_runner('C')
+    elif match_num == 76:
+        return get_winner('C'), get_runner('F')
+    elif match_num == 77:
+        return get_winner('I'), best_thirds_allocation.get(77, '3º C/D/F/G/H')
+    elif match_num == 78:
+        return get_runner('E'), get_runner('I')
+    elif match_num == 79:
+        return get_winner('A'), best_thirds_allocation.get(79, '3º C/E/F/H/I')
+    elif match_num == 80:
+        return get_winner('L'), best_thirds_allocation.get(80, '3º E/H/I/J/K')
+    elif match_num == 81:
+        return get_winner('D'), best_thirds_allocation.get(81, '3º B/E/F/I/J')
+    elif match_num == 82:
+        return get_winner('G'), best_thirds_allocation.get(82, '3º A/E/H/I/J')
+    elif match_num == 83:
+        return get_runner('K'), get_runner('L')
+    elif match_num == 84:
+        return get_winner('H'), get_runner('J')
+    elif match_num == 85:
+        return get_winner('B'), best_thirds_allocation.get(85, '3º E/F/G/I/J')
+    elif match_num == 86:
+        return get_winner('J'), get_runner('H')
+    elif match_num == 87:
+        return get_winner('K'), best_thirds_allocation.get(87, '3º D/E/I/J/L')
+    elif match_num == 88:
+        return get_runner('D'), get_runner('G')
+    return None, None
+
+def resolve_team_placeholder(team_text, match_results_resolved):
+    m_winner = re.match(r'Winner Match (\d+)', team_text, re.IGNORECASE)
+    if m_winner:
+        parent_num = int(m_winner.group(1))
+        return match_results_resolved.get(parent_num, {}).get("winner", f"Vencedor Jogo {parent_num}")
+        
+    m_loser = re.match(r'Loser Match (\d+)', team_text, re.IGNORECASE)
+    if m_loser:
+        parent_num = int(m_loser.group(1))
+        return match_results_resolved.get(parent_num, {}).get("loser", f"Perdedor Jogo {parent_num}")
+        
+    return team_text
+
+def get_elimination_status(team, qualified_set, match_results_resolved):
+    if team not in qualified_set:
+        return "Eliminado na Fase de Grupos"
+    
+    if 104 in match_results_resolved:
+        res104 = match_results_resolved[104]
+        if res104["winner"] == team:
+            return "Campeão"
+        if res104["loser"] == team:
+            return "Vice-campeão"
+            
+    if 103 in match_results_resolved:
+        res103 = match_results_resolved[103]
+        if res103["winner"] == team:
+            return "3º Colocado"
+        if res103["loser"] == team:
+            return "4º Colocado"
+            
+    for m in [97, 98, 99, 100]:
+        if m in match_results_resolved and match_results_resolved[m]["loser"] == team:
+            return "Eliminado nas Quartas"
+    for m in range(89, 97):
+        if m in match_results_resolved and match_results_resolved[m]["loser"] == team:
+            return "Eliminado nas Oitavas"
+    for m in range(73, 89):
+        if m in match_results_resolved and match_results_resolved[m]["loser"] == team:
+            return "Eliminado nos 16 avos (R32)"
+            
+    return "Classificado para próxima fase"
 
 def main():
     print("Starting data pipeline execution...")
@@ -390,7 +678,10 @@ def main():
         weighted_goals_scored REAL,
         weighted_goals_conceded REAL,
         gas_next_match REAL,
-        gas_desc_next_match TEXT
+        gas_desc_next_match TEXT,
+        yellow_cards INTEGER,
+        red_cards INTEGER,
+        card_behavior TEXT
     )
     """)
     
@@ -399,6 +690,7 @@ def main():
         match_number INTEGER PRIMARY KEY,
         match_date TEXT,
         group_name TEXT,
+        stage TEXT,
         home_team TEXT,
         away_team TEXT,
         expected_goals_home REAL,
@@ -420,7 +712,11 @@ def main():
         gas_away REAL,
         gas_desc_home TEXT,
         gas_desc_away TEXT,
-        is_gas_alert INTEGER
+        is_gas_alert INTEGER,
+        yc_home INTEGER,
+        yc_away INTEGER,
+        rc_home INTEGER,
+        rc_away INTEGER
     )
     """)
     
@@ -627,14 +923,49 @@ def main():
         }
         consolidated_data.append(record)
         
+        # Pre-calculate cards for matches 1 to 72 (group stage)
+        group_stage_cards = {}
+        for team_name in qualified_teams:
+            group_stage_cards[normalize_name(team_name)] = {"yc": 0, "rc": 0}
+            
+        with open("fixtures.csv", "r", encoding="utf-8") as f_cards:
+            reader_cards = csv.DictReader(f_cards)
+            for row_c in reader_cards:
+                if row_c['stage'] == 'group-stage':
+                    m_num_c = int(row_c['match_number'])
+                    home_nc = normalize_name(row_c['home_team'])
+                    away_nc = normalize_name(row_c['away_team'])
+                    yc_h, yc_a, rc_h, rc_a = get_deterministic_cards(home_nc, away_nc, m_num_c)
+                    if home_nc in group_stage_cards:
+                        group_stage_cards[home_nc]["yc"] += yc_h
+                        group_stage_cards[home_nc]["rc"] += rc_h
+                    if away_nc in group_stage_cards:
+                        group_stage_cards[away_nc]["yc"] += yc_a
+                        group_stage_cards[away_nc]["rc"] += rc_a
+
+        # Get card statistics for this team
+        c_stats = group_stage_cards.get(team, {"yc": 0, "rc": 0})
+        yc = c_stats["yc"]
+        rc = c_stats["rc"]
+        if yc <= 3 and rc == 0:
+            behavior = "comportado"
+        elif yc >= 7 or rc >= 1:
+            behavior = "rebelde"
+        else:
+            behavior = "neutro"
+            
+        record["yellow_cards"] = yc
+        record["red_cards"] = rc
+        record["card_behavior"] = behavior
+
         # Insert summary record into SQLite
         cursor.execute("""
-        INSERT INTO teams_summary (team, fifa_rank, elo, form_index, attack_strength, defense_strength, weighted_win_rate, weighted_draw_rate, weighted_loss_rate, opponent_strength, weighted_goals_scored, weighted_goals_conceded, gas_next_match, gas_desc_next_match)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (team, current_fifa, int(round(current_elo)), round(avg_form_index, 1), round(attack_strength, 2), round(defense_strength, 2), round(avg_win_rate, 2), round(avg_draw_rate, 2), round(avg_loss_rate, 2), int(round(avg_opp_elo)), round(avg_goals_scored, 2), round(avg_goals_conceded, 2), 0.0, ""))
+        INSERT INTO teams_summary (team, fifa_rank, elo, form_index, attack_strength, defense_strength, weighted_win_rate, weighted_draw_rate, weighted_loss_rate, opponent_strength, weighted_goals_scored, weighted_goals_conceded, gas_next_match, gas_desc_next_match, yellow_cards, red_cards, card_behavior)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (team, current_fifa, int(round(current_elo)), round(avg_form_index, 1), round(attack_strength, 2), round(defense_strength, 2), round(avg_win_rate, 2), round(avg_draw_rate, 2), round(avg_loss_rate, 2), int(round(avg_opp_elo)), round(avg_goals_scored, 2), round(avg_goals_conceded, 2), 0.0, "", yc, rc, behavior))
         
-    # 7. Simulate World Cup 2026 group stage matches
-    print("Simulating World Cup 2026 group stage matches...")
+    # 7. Simulate World Cup 2026 matches
+    print("Simulating World Cup 2026 matches...")
     
     # Load actual Copa 2026 results
     print("Loading actual Copa 2026 results...")
@@ -684,7 +1015,7 @@ def main():
         except Exception as e:
             print(f"Error loading custom real results from JSON: {e}")
             
-    print(f"Total resolved real results for group stage: {len(real_results)}")
+    print(f"Total resolved real results: {len(real_results)}")
 
     group_simulations = []
     
@@ -694,6 +1025,7 @@ def main():
     # Map teams by name for easy lookup
     teams_map = {t["team"]: t for t in consolidated_data}
     
+    # 7.1 Group Stage Simulation (matches 1 to 72)
     with open("fixtures.csv", "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -754,7 +1086,6 @@ def main():
                 win_a /= sum_prob
                 draw /= sum_prob
                 
-                # Over 2.5 alert threshold is 70%, Over 1.5 alert threshold is 85%
                 is_alert = 1 if over_2_5 >= 0.70 else 0
                 is_alert_1_5 = 1 if over_1_5 >= 0.85 else 0
                 
@@ -778,11 +1109,15 @@ def main():
                 gas_a, gas_desc_a = calculate_gas_for_team(state_a, group_teams_states)
                 is_gas_alert = 1 if (gas_h >= 0.80 or gas_a >= 0.80) else 0
                 
+                # Generate cards
+                home_yc, away_yc, home_rc, away_rc = get_deterministic_cards(home, away, match_num)
+                
                 sim_record = {
                     "match_number": match_num,
                     "date": date_str,
                     "kickoff_utc": kickoff_utc,
                     "group": group_name,
+                    "stage": "group-stage",
                     "home_team": home,
                     "away_team": away,
                     "expected_goals_home": round(lambda_h, 2),
@@ -803,58 +1138,228 @@ def main():
                     "gas_away": round(gas_a, 2),
                     "gas_desc_home": gas_desc_h,
                     "gas_desc_away": gas_desc_a,
-                    "is_gas_alert": is_gas_alert
+                    "is_gas_alert": is_gas_alert,
+                    "yc_home": home_yc,
+                    "yc_away": away_yc,
+                    "rc_home": home_rc,
+                    "rc_away": away_rc
                 }
                 group_simulations.append(sim_record)
                 
                 # Write to SQLite
                 cursor.execute("""
                 INSERT INTO group_stage_simulations (
-                    match_number, match_date, group_name, home_team, away_team,
+                    match_number, match_date, group_name, stage, home_team, away_team,
                     expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
                     prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
                     is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
-                    gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert,
+                    yc_home, yc_away, rc_home, rc_away
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    match_num, date_str, group_name, home, away,
+                    match_num, date_str, group_name, "group-stage", home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
                     round(over_1_5, 3), round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], 
                     is_alert_1_5, is_alert, real_h, real_a, kickoff_utc,
-                    round(gas_h, 2), round(gas_a, 2), gas_desc_h, gas_desc_a, is_gas_alert
+                    round(gas_h, 2), round(gas_a, 2), gas_desc_h, gas_desc_a, is_gas_alert,
+                    home_yc, away_yc, home_rc, away_rc
                 ))
                 
-    # After simulating all group stage matches, find the next unplayed match for each team
-    # and update `teams_summary` in SQLite and `world_cup_2026_teams.json` (consolidated_data)
+    # 7.2 Calculate group standings & allocate 3rd places
+    print("Calculating group standings and third-place allocations...")
+    group_standings = get_group_standings(group_simulations, consolidated_data, fixtures_list)
+    best_thirds = get_best_third_placed_teams(group_standings)
+    best_thirds_allocation = allocate_third_places(best_thirds)
+    
+    # Track resolved knockout match winners/losers
+    match_results_resolved = {}
+    
+    qualified_set = set()
+    for g, teams in group_standings.items():
+        if len(teams) >= 2:
+            qualified_set.add(teams[0]["team"])
+            qualified_set.add(teams[1]["team"])
+    for t in best_thirds:
+        qualified_set.add(t["team"])
+        
+    # 7.3 Knockout Stage Simulation (matches 73 to 104)
+    print("Simulating knockout stage matches...")
+    with open("fixtures.csv", "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            stage = row['stage']
+            if stage != 'group-stage':
+                match_num = int(row['match_number'])
+                date_str = row['date']
+                kickoff_utc = row['kickoff_utc']
+                home_placeholder = row['home_team']
+                away_placeholder = row['away_team']
+                
+                # Resolve placeholder names to actual teams
+                if match_num <= 88:
+                    home, away = resolve_r32_teams(match_num, group_standings, best_thirds_allocation)
+                else:
+                    home = resolve_team_placeholder(home_placeholder, match_results_resolved)
+                    away = resolve_team_placeholder(away_placeholder, match_results_resolved)
+                    
+                # Setup map references
+                stats_h = teams_map.get(home, {"attack_strength": 1.0, "defense_strength": 1.0, "elo": 1500})
+                stats_a = teams_map.get(away, {"attack_strength": 1.0, "defense_strength": 1.0, "elo": 1500})
+                
+                # Expected goals
+                lambda_h = (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                lambda_a = (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                
+                # Apply home advantage for host nations
+                if home in ["Mexico", "Canada", "United States"]:
+                    lambda_h *= 1.10
+                    lambda_a /= 1.10
+                    
+                win_h, win_a, draw = 0.0, 0.0, 0.0
+                over_1_5 = 0.0
+                over_2_5 = 0.0
+                btts = 0.0
+                max_prob = -1.0
+                best_score = (0, 0)
+                
+                for x in range(10):
+                    probX = poisson_probability(x, lambda_h)
+                    for y in range(10):
+                        probY = poisson_probability(y, lambda_a)
+                        probXY = probX * probY
+                        
+                        if x > y:
+                            win_h += probXY
+                        elif x < y:
+                            win_a += probXY
+                        else:
+                            draw += probXY
+                            
+                        if x + y > 1:
+                            over_1_5 += probXY
+                        if x + y > 2:
+                            over_2_5 += probXY
+                        if x > 0 and y > 0:
+                            btts += probXY
+                            
+                        if probXY > max_prob:
+                            max_prob = probXY
+                            best_score = (x, y)
+                            
+                # Normalize probabilities
+                sum_prob = win_h + win_a + draw
+                win_h /= sum_prob
+                win_a /= sum_prob
+                draw /= sum_prob
+                
+                is_alert = 1 if over_2_5 >= 0.70 else 0
+                is_alert_1_5 = 1 if over_1_5 >= 0.85 else 0
+                
+                # Check for real results
+                real_h = None
+                real_a = None
+                if match_num in real_results:
+                    real_h = real_results[match_num]["home_score"]
+                    real_a = real_results[match_num]["away_score"]
+                    
+                # Determine winner and loser
+                home_wins = True
+                if real_h is not None and real_a is not None:
+                    if real_h > real_a:
+                        home_wins = True
+                    elif real_h < real_a:
+                        home_wins = False
+                    else: # real tie, ELO tiebreaker
+                        home_wins = (stats_h["elo"] >= stats_a["elo"])
+                else:
+                    if best_score[0] > best_score[1]:
+                        home_wins = True
+                    elif best_score[0] < best_score[1]:
+                        home_wins = False
+                    else: # simulated tie, ELO tiebreaker
+                        home_wins = (stats_h["elo"] >= stats_a["elo"])
+                        
+                winner = home if home_wins else away
+                loser = away if home_wins else home
+                match_results_resolved[match_num] = {"winner": winner, "loser": loser}
+                
+                # Generate cards
+                home_yc, away_yc, home_rc, away_rc = get_deterministic_cards(home, away, match_num)
+                
+                # GAS is not defined for knockout stage
+                gas_h, gas_desc_h = 0.0, "Mata-mata"
+                gas_a, gas_desc_a = 0.0, "Mata-mata"
+                is_gas_alert = 0
+                
+                sim_record = {
+                    "match_number": match_num,
+                    "date": date_str,
+                    "kickoff_utc": kickoff_utc,
+                    "group": "",
+                    "stage": stage,
+                    "home_team": home,
+                    "away_team": away,
+                    "expected_goals_home": round(lambda_h, 2),
+                    "expected_goals_away": round(lambda_a, 2),
+                    "prob_win_home": round(win_h, 3),
+                    "prob_draw": round(draw, 3),
+                    "prob_win_away": round(win_a, 3),
+                    "prob_over_1_5": round(over_1_5, 3),
+                    "prob_over_2_5": round(over_2_5, 3),
+                    "prob_btts": round(btts, 3),
+                    "predicted_score_home": best_score[0],
+                    "predicted_score_away": best_score[1],
+                    "is_over_1_5_alert": is_alert_1_5,
+                    "is_over_2_5_alert": is_alert,
+                    "real_score_home": real_h,
+                    "real_score_away": real_a,
+                    "gas_home": round(gas_h, 2),
+                    "gas_away": round(gas_a, 2),
+                    "gas_desc_home": gas_desc_h,
+                    "gas_desc_away": gas_desc_a,
+                    "is_gas_alert": is_gas_alert,
+                    "yc_home": home_yc,
+                    "yc_away": away_yc,
+                    "rc_home": home_rc,
+                    "rc_away": away_rc
+                }
+                group_simulations.append(sim_record)
+                
+                # Write to SQLite
+                cursor.execute("""
+                INSERT INTO group_stage_simulations (
+                    match_number, match_date, group_name, stage, home_team, away_team,
+                    expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away,
+                    prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
+                    is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
+                    gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert,
+                    yc_home, yc_away, rc_home, rc_away
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    match_num, date_str, "", stage, home, away,
+                    round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
+                    round(over_1_5, 3), round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], 
+                    is_alert_1_5, is_alert, real_h, real_a, kickoff_utc,
+                    round(gas_h, 2), round(gas_a, 2), gas_desc_h, gas_desc_a, is_gas_alert,
+                    home_yc, away_yc, home_rc, away_rc
+                ))
+                
+    # Update teams_summary gas and status fields based on final outcomes
     for team_record in consolidated_data:
         team_name = team_record["team"]
         
-        # Find all simulated group matches for this team
-        team_sims = [sim for sim in group_simulations if sim["home_team"] == team_name or sim["away_team"] == team_name]
-        team_sims.sort(key=lambda x: x["match_number"])
+        # Calculate their tournament status
+        status_desc = get_elimination_status(team_name, qualified_set, match_results_resolved)
         
-        next_match = None
-        for sim in team_sims:
-            if sim["real_score_home"] is None:
-                next_match = sim
-                break
-                
-        if next_match is not None:
-            is_home = (next_match["home_team"] == team_name)
-            gas_val = next_match["gas_home"] if is_home else next_match["gas_away"]
-            gas_desc = next_match["gas_desc_home"] if is_home else next_match["gas_desc_away"]
-        else:
-            gas_val = 0.0
-            gas_desc = "Fase de grupos encerrada"
-            
-        team_record["gas_next_match"] = round(gas_val, 2)
-        team_record["gas_desc_next_match"] = gas_desc
+        # Update record
+        team_record["gas_next_match"] = 0.0
+        team_record["gas_desc_next_match"] = status_desc
         
         cursor.execute("""
         UPDATE teams_summary
-        SET gas_next_match = ?, gas_desc_next_match = ?
+        SET gas_next_match = 0.0, gas_desc_next_match = ?
         WHERE team = ?
-        """, (round(gas_val, 2), gas_desc, team_name))
+        """, (status_desc, team_name))
         
     # Save simulations to JSON
     with open("group_stage_simulations.json", "w", encoding="utf-8") as f:

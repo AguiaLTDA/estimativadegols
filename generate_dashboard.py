@@ -45,13 +45,14 @@ def generate_html():
             "matches": matches
         }
         
-    # 3. Load group stage simulations
+    # 3. Load simulations
     cursor.execute("""
     SELECT match_number, match_date, group_name, home_team, away_team, 
            expected_goals_home, expected_goals_away, prob_win_home, prob_draw, prob_win_away, 
            prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
            is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
-           gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert
+           gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert,
+           stage, yc_home, yc_away, rc_home, rc_away
     FROM group_stage_simulations
     ORDER BY match_number ASC
     """)
@@ -84,7 +85,12 @@ def generate_html():
             "gas_away": row[21],
             "gas_desc_home": row[22],
             "gas_desc_away": row[23],
-            "is_gas_alert": row[24]
+            "is_gas_alert": row[24],
+            "stage": row[25],
+            "yc_home": row[26],
+            "yc_away": row[27],
+            "rc_home": row[28],
+            "rc_away": row[29]
         })
         
     conn.close()
@@ -1080,7 +1086,7 @@ def generate_html():
             </div>
             <div class="time-control-actions">
                 <button id="prevDayBtn" class="time-btn">◀ Dia Anterior</button>
-                <input type="date" id="copaDateInput" class="copa-date-picker" min="2026-06-11" max="2026-06-28" value="2026-06-15">
+                <input type="date" id="copaDateInput" class="copa-date-picker" min="2026-06-11" max="2026-07-19" value="2026-06-15">
                 <button id="nextDayBtn" class="time-btn">Próximo Dia ▶</button>
             </div>
             <div class="time-control-status" id="timeControlStatus">
@@ -1274,6 +1280,17 @@ def generate_html():
         // Injected payloads
         const dbData = {json.dumps(db_data, ensure_ascii=False)};
         const groupSimulations = {json.dumps(group_simulations, ensure_ascii=False)};
+        
+        function formatStageName(stage) {{
+            if (stage === 'group-stage') return 'Fase de Grupos';
+            if (stage === 'round-of-32') return 'Fase de 32 (16avos)';
+            if (stage === 'round-of-16') return 'Oitavas de Final';
+            if (stage === 'quarter-finals') return 'Quartas de Final';
+            if (stage === 'semi-finals') return 'Semifinal';
+            if (stage === 'third-place') return 'Disputa de 3º Lugar';
+            if (stage === 'final') return 'Final';
+            return stage;
+        }}
         
         // Calculate average defense strength dynamically across all 48 teams
         const allTeams = Object.values(dbData);
@@ -1533,7 +1550,7 @@ def generate_html():
                         matchesHtml += `
                             <div class="${{cardClass}}">
                                 <div class="match-item-header">
-                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}${{kickoffTimeHtml}}</span>
+                                    <span>Jogo #${{match.match_number}} - ${{match.stage === 'group-stage' ? 'Grupo ' + match.group : formatStageName(match.stage)}}${{kickoffTimeHtml}}</span>
                                     <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
                                 </div>
                                 <div class="match-item-teams">
@@ -1543,6 +1560,9 @@ def generate_html():
                                 </div>
                                 <div class="match-item-score-prediction">
                                     Placar Provável: <strong>${{match.pred_home}} - ${{match.pred_away}}</strong>
+                                </div>
+                                <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+                                    🟨 ${{match.yc_home}} - ${{match.yc_away}} 🟨 ${{ (match.rc_home > 0 || match.rc_away > 0) ? ' | 🟥 ' + match.rc_home + ' - ' + match.rc_away + ' 🟥' : '' }}
                                 </div>
                                 ${{realResultHtml}}
                                 
@@ -1619,7 +1639,7 @@ def generate_html():
                         matchesHtml += `
                             <div class="${{cardClass}}">
                                 <div class="match-item-header">
-                                    <span>Jogo #${{match.match_number}} - Grupo ${{match.group}}${{kickoffTimeHtml}}</span>
+                                    <span>Jogo #${{match.match_number}} - ${{match.stage === 'group-stage' ? 'Grupo ' + match.group : formatStageName(match.stage)}}${{kickoffTimeHtml}}</span>
                                     <span style="font-weight:600;">xG: ${{match.exp_g_home.toFixed(2)}} - ${{match.exp_g_away.toFixed(2)}}</span>
                                 </div>
                                 <div class="match-item-teams">
@@ -1629,6 +1649,9 @@ def generate_html():
                                 </div>
                                 <div class="match-item-score-prediction" ${{predictionStyle}}>
                                     Placar Provável: <strong>${{match.pred_home}} - ${{match.pred_away}}</strong>
+                                </div>
+                                <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+                                    🟨 ${{match.yc_home}} - ${{match.yc_away}} 🟨 ${{ (match.rc_home > 0 || match.rc_away > 0) ? ' | 🟥 ' + match.rc_home + ' - ' + match.rc_away + ' 🟥' : '' }}
                                 </div>
                                 
                                 <div class="match-item-gas-prediction" style="margin: 0.5rem 0; font-size: 0.8rem; padding: 0.4rem 0.6rem; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 0.2rem;">
@@ -1669,6 +1692,12 @@ def generate_html():
                 const team = dbData[teamName];
                 const sum = team.summary;
                 
+                let behaviorColor = 'var(--text-muted)';
+                let behaviorLabel = sum.card_behavior.charAt(0).toUpperCase() + sum.card_behavior.slice(1);
+                if (sum.card_behavior === 'comportado') behaviorColor = 'var(--success)';
+                else if (sum.card_behavior === 'neutro') behaviorColor = '#f59e0b';
+                else if (sum.card_behavior === 'rebelde') behaviorColor = 'var(--danger)';
+                
                 const card = document.createElement('div');
                 card.className = 'team-card';
                 card.innerHTML = `
@@ -1685,16 +1714,24 @@ def generate_html():
                         <span class="stat-value" style="color: #fff;">${{sum.weighted_goals_scored.toFixed(2)}} / ${{sum.weighted_goals_conceded.toFixed(2)}}</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Ataque Ajustado</span>
-                        <span class="stat-value" style="color: var(--success);">${{sum.attack_strength.toFixed(2)}}</span>
+                        <span class="stat-label">Ataque / Defesa</span>
+                        <span class="stat-value"><span style="color: var(--success);">${{sum.attack_strength.toFixed(2)}}</span> / <span style="color: var(--danger);">${{sum.defense_strength.toFixed(2)}}</span></span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Defesa Ajustada</span>
-                        <span class="stat-value" style="color: var(--danger);">${{sum.defense_strength.toFixed(2)}}</span>
+                        <span class="stat-label">Cartões (🟨 / 🟥)</span>
+                        <span class="stat-value" style="color: #fff;">🟨 ${{sum.yellow_cards}} / 🟥 ${{sum.red_cards}}</span>
                     </div>
-                    <div class="stat-row" style="margin-top: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.6rem;">
+                    <div class="stat-row">
+                        <span class="stat-label">Conduta Disciplinar</span>
+                        <span class="stat-value" style="color: ${{behaviorColor}}; font-weight: 600;">${{behaviorLabel}}</span>
+                    </div>
+                    <div class="stat-row" style="margin-top: 0.4rem; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 0.4rem;">
+                        <span class="stat-label">Status Copa 2026</span>
+                        <span class="stat-value" style="color: ${{sum.gas_desc_next_match === 'Campeão' ? 'var(--success)' : (sum.gas_desc_next_match.startsWith('Eliminado') ? 'var(--text-muted)' : 'var(--accent-secondary)')}}; font-weight: 600;">${{sum.gas_desc_next_match}}</span>
+                    </div>
+                    <div class="stat-row" style="margin-top: 0.4rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.4rem;">
                         <span class="stat-label">V / E / D (Pond.)</span>
-                        <span class="stat-value">${{(sum.weighted_win_rate*100).toFixed(0)}}% / ${{((sum.weighted_draw_rate)*100).toFixed(0)}}% / ${{((sum.weighted_loss_rate)*100).toFixed(0)}}%</span>
+                        <span class="stat-value">${{ (sum.weighted_win_rate*100).toFixed(0) }}% / ${{ ((sum.weighted_draw_rate)*100).toFixed(0) }}% / ${{ ((sum.weighted_loss_rate)*100).toFixed(0) }}%</span>
                     </div>
                 `;
                 

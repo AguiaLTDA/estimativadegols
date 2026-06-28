@@ -45,7 +45,10 @@ def run_validation():
         "weighted_goals_scored": float,
         "weighted_goals_conceded": float,
         "gas_next_match": float,
-        "gas_desc_next_match": str
+        "gas_desc_next_match": str,
+        "yellow_cards": int,
+        "red_cards": int,
+        "card_behavior": str
     }
     
     for team_data in data:
@@ -121,11 +124,13 @@ def run_validation():
         # Verify teams_summary columns exist
         cursor.execute("PRAGMA table_info(teams_summary)")
         summary_columns = [col[1] for col in cursor.fetchall()]
-        if "gas_next_match" not in summary_columns or "gas_desc_next_match" not in summary_columns:
-            print("FAILED: SQLite teams_summary is missing gas columns.")
+        required_summary_cols = ["gas_next_match", "gas_desc_next_match", "yellow_cards", "red_cards", "card_behavior"]
+        missing_summary_cols = [col for col in required_summary_cols if col not in summary_columns]
+        if missing_summary_cols:
+            print(f"FAILED: SQLite teams_summary is missing columns: {missing_summary_cols}")
             conn.close()
             return False
-        print("OK: SQLite teams_summary has gas columns.")
+        print("OK: SQLite teams_summary has gas and card columns.")
         
         # Verify team_matches count
         cursor.execute("SELECT COUNT(*) FROM team_matches")
@@ -145,17 +150,17 @@ def run_validation():
             return False
         print("OK: No NULL values found in matches table.")
         
-        # Verify group_stage_simulations table exists and has 72 rows
+        # Verify group_stage_simulations table exists and has 104 rows
         cursor.execute("SELECT COUNT(*) FROM group_stage_simulations")
         group_sim_count = cursor.fetchone()[0]
-        if group_sim_count != 72:
-            print(f"FAILED: SQLite group_stage_simulations has {group_sim_count} rows, expected 72.")
+        if group_sim_count != 104:
+            print(f"FAILED: SQLite group_stage_simulations has {group_sim_count} rows, expected 104.")
             conn.close()
             return False
-        print("OK: SQLite group_stage_simulations has exactly 72 rows.")
+        print("OK: SQLite group_stage_simulations has exactly 104 rows.")
         
         # Verify no NULLs in group_stage_simulations (except real_goals_home/away which can be NULL for unplayed matches)
-        cursor.execute("SELECT COUNT(*) FROM group_stage_simulations WHERE home_team IS NULL OR away_team IS NULL OR expected_goals_home IS NULL OR gas_home IS NULL OR gas_away IS NULL OR gas_desc_home IS NULL OR gas_desc_away IS NULL OR is_gas_alert IS NULL")
+        cursor.execute("SELECT COUNT(*) FROM group_stage_simulations WHERE home_team IS NULL OR away_team IS NULL OR expected_goals_home IS NULL OR is_gas_alert IS NULL")
         group_nulls = cursor.fetchone()[0]
         if group_nulls > 0:
             print("FAILED: Found NULL values in group_stage_simulations gas or team columns.")
@@ -164,7 +169,7 @@ def run_validation():
         # Verify columns real_goals_home, real_goals_away, kickoff_utc, prob_over_1_5, is_over_1_5_alert, gas_home, gas_away, gas_desc_home, gas_desc_away, and is_gas_alert exist
         cursor.execute("PRAGMA table_info(group_stage_simulations)")
         columns = [col[1] for col in cursor.fetchall()]
-        required_cols = ["real_goals_home", "real_goals_away", "kickoff_utc", "prob_over_1_5", "is_over_1_5_alert", "gas_home", "gas_away", "gas_desc_home", "gas_desc_away", "is_gas_alert"]
+        required_cols = ["real_goals_home", "real_goals_away", "kickoff_utc", "prob_over_1_5", "is_over_1_5_alert", "gas_home", "gas_away", "gas_desc_home", "gas_desc_away", "is_gas_alert", "stage", "yc_home", "yc_away", "rc_home", "rc_away"]
         missing_cols = [col for col in required_cols if col not in columns]
         if missing_cols:
             print(f"FAILED: SQLite group_stage_simulations is missing columns: {missing_cols}")
@@ -185,14 +190,14 @@ def run_validation():
     try:
         with open(json_sim_path, "r", encoding="utf-8") as f:
             sim_data = json.load(f)
-        if len(sim_data) != 72:
-            print(f"FAILED: Expected 72 simulations in JSON, but found {len(sim_data)}.")
+        if len(sim_data) != 104:
+            print(f"FAILED: Expected 104 simulations in JSON, but found {len(sim_data)}.")
             return False
-        print("OK: group_stage_simulations.json exists and contains 72 records.")
+        print("OK: group_stage_simulations.json exists and contains 104 records.")
         
         # Check that keys real_score_home, real_score_away, kickoff_utc, prob_over_1_5, is_over_1_5_alert, gas_home, gas_away, gas_desc_home, gas_desc_away, and is_gas_alert are present in JSON
         for sim in sim_data:
-            required_keys = ["real_score_home", "real_score_away", "kickoff_utc", "prob_over_1_5", "is_over_1_5_alert", "gas_home", "gas_away", "gas_desc_home", "gas_desc_away", "is_gas_alert"]
+            required_keys = ["real_score_home", "real_score_away", "kickoff_utc", "prob_over_1_5", "is_over_1_5_alert", "gas_home", "gas_away", "gas_desc_home", "gas_desc_away", "is_gas_alert", "stage", "yc_home", "yc_away", "rc_home", "rc_away"]
             missing_keys = [k for k in required_keys if k not in sim]
             if missing_keys:
                 print(f"FAILED: Simulation record for match #{sim.get('match_number')} is missing keys: {missing_keys}")
