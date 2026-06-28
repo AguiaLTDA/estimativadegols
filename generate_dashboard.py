@@ -1799,7 +1799,7 @@ def generate_html():
                 const scoreStr = `${{m.goals_scored}} - ${{m.goals_conceded}}`;
                 
                 const opponentName = m.opponent;
-                const isOpponentClickable = dbData[opponentName] ? 'class="clickable-team" onclick="openModal(\'' + opponentName + '\')"' : '';
+                const isOpponentClickable = dbData[opponentName] ? 'class="clickable-team" onclick="openModal(\\\'' + opponentName + '\\\')"' : '';
                 
                 row.innerHTML = `
                     <td>${{m.date}}</td>
