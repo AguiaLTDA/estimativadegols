@@ -107,28 +107,56 @@ def main():
         score_text = re.sub(r'\s+', ' ', score_text).strip()
         score_clean = score_text.replace('\u2212', '-').replace('\u2013', '-').replace('\u2014', '-')
         
-        # Check if score represents a finished match (e.g. "2-0", "1-1")
-        match_score = re.match(r'^(\d+)\s*-\s*(\d+)$', score_clean)
+        # Check if score represents a finished match (e.g. "2-0", "1-1", "1-1 ( a.e.t. )")
+        match_score = re.search(r'^(\d+)\s*-\s*(\d+)', score_clean)
         if match_score:
             home_score = int(match_score.group(1))
             away_score = int(match_score.group(2))
+            
+            # If scores are equal, we check if there was a penalty shootout
+            winner_val = None
+            if home_score == away_score:
+                box_text = re.sub(r'<[^>]+>', ' ', unescaped_box)
+                box_text = re.sub(r'\s+', ' ', box_text).strip()
+                penalties_idx = box_text.find("Penalties")
+                if penalties_idx != -1:
+                    pen_text = box_text[penalties_idx:]
+                    # Match a score like "3–4" or "3-4"
+                    pen_score_match = re.search(r'\b(\d+)\s*[\u2013-]\s*(\d+)\b', pen_text)
+                    if pen_score_match:
+                        pen_home = int(pen_score_match.group(1))
+                        pen_away = int(pen_score_match.group(2))
+                        if pen_home > pen_away:
+                            winner_val = "home"
+                        elif pen_away > pen_home:
+                            winner_val = "away"
             
             # Check if this is new or updated
             match_key = str(match_number_str)
             existing_result = real_results.get(match_key)
             
-            if not existing_result or existing_result['home_score'] != home_score or existing_result['away_score'] != away_score:
+            is_updated = False
+            if not existing_result:
+                is_updated = True
+            elif existing_result.get('home_score') != home_score or existing_result.get('away_score') != away_score:
+                is_updated = True
+            elif existing_result.get("winner") != winner_val:
+                is_updated = True
+                
+            if is_updated:
                 if not existing_result:
                     new_results_count += 1
-                    print(f"New result found for Match {match_key} ({fixture['home_team']} vs {fixture['away_team']}): {home_score}-{away_score}")
+                    print(f"New result found for Match {match_key} ({fixture['home_team']} vs {fixture['away_team']}): {home_score}-{away_score}" + (f" (Winner: {winner_val})" if winner_val else ""))
                 else:
                     updates_made += 1
-                    print(f"Updated result for Match {match_key} ({fixture['home_team']} vs {fixture['away_team']}): {existing_result['home_score']}-{existing_result['away_score']} -> {home_score}-{away_score}")
+                    print(f"Updated result for Match {match_key} ({fixture['home_team']} vs {fixture['away_team']}): {existing_result.get('home_score', 'N/A')}-{existing_result.get('away_score', 'N/A')} -> {home_score}-{away_score}" + (f" (Winner: {existing_result.get('winner')} -> {winner_val})" if winner_val or existing_result.get('winner') else ""))
                 
                 real_results[match_key] = {
                     "home_score": home_score,
                     "away_score": away_score
                 }
+                if winner_val:
+                    real_results[match_key]["winner"] = winner_val
                 
     # Save results to json
     if new_results_count > 0 or updates_made > 0:

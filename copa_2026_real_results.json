@@ -326,5 +326,28 @@
   "85": {
     "home_score": 2,
     "away_score": 0
+  },
+  "74": {
+    "home_score": 1,
+    "away_score": 1,
+    "winner": "away"
+  },
+  "75": {
+    "home_score": 1,
+    "away_score": 1,
+    "winner": "away"
+  },
+  "82": {
+    "home_score": 3,
+    "away_score": 2
+  },
+  "88": {
+    "home_score": 1,
+    "away_score": 1,
+    "winner": "away"
+  },
+  "86": {
+    "home_score": 3,
+    "away_score": 2
   }
 }

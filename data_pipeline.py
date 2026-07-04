@@ -1478,7 +1478,8 @@ def main():
                     m_num = int(m_num_str)
                     real_results[m_num] = {
                         "home_score": int(scores["home_score"]),
-                        "away_score": int(scores["away_score"])
+                        "away_score": int(scores["away_score"]),
+                        "winner": scores.get("winner")
                     }
             print(f"Loaded {len(custom_res)} custom results from JSON override.")
         except Exception as e:
@@ -1738,8 +1739,15 @@ def main():
                         home_wins = True
                     elif real_h < real_a:
                         home_wins = False
-                    else: # real tie, ELO tiebreaker
-                        home_wins = (stats_h["elo"] >= stats_a["elo"])
+                    else: # real tie, check for winner field
+                        real_match_info = real_results.get(match_num, {})
+                        winner_val = real_match_info.get("winner")
+                        if winner_val == "home":
+                            home_wins = True
+                        elif winner_val == "away":
+                            home_wins = False
+                        else: # ELO fallback
+                            home_wins = (stats_h["elo"] >= stats_a["elo"])
                 else:
                     if best_score[0] > best_score[1]:
                         home_wins = True

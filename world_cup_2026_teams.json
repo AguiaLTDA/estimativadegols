@@ -54,7 +54,7 @@
     "red_cards": 0,
     "card_behavior": "rebelde",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nas Oitavas"
+    "gas_desc_next_match": "Eliminado nos 16 avos (R32)"
   },
   {
     "team": "Austria",
@@ -301,7 +301,7 @@
     "red_cards": 1,
     "card_behavior": "rebelde",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nos 16 avos (R32)"
+    "gas_desc_next_match": "Eliminado nas Oitavas"
   },
   {
     "team": "England",
@@ -358,7 +358,7 @@
     "red_cards": 0,
     "card_behavior": "neutro",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nas Oitavas"
+    "gas_desc_next_match": "Eliminado nos 16 avos (R32)"
   },
   {
     "team": "Ghana",
@@ -529,7 +529,7 @@
     "red_cards": 0,
     "card_behavior": "rebelde",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nos 16 avos (R32)"
+    "gas_desc_next_match": "Eliminado nas Quartas"
   },
   {
     "team": "Netherlands",
@@ -548,7 +548,7 @@
     "red_cards": 0,
     "card_behavior": "rebelde",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nas Quartas"
+    "gas_desc_next_match": "Eliminado nos 16 avos (R32)"
   },
   {
     "team": "New Zealand",
@@ -624,7 +624,7 @@
     "red_cards": 0,
     "card_behavior": "neutro",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nos 16 avos (R32)"
+    "gas_desc_next_match": "Eliminado nas Oitavas"
   },
   {
     "team": "Portugal",
