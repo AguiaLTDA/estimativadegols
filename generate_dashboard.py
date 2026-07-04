@@ -52,7 +52,11 @@ def generate_html():
            prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
            is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
            gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert,
-           stage, yc_home, yc_away, rc_home, rc_away
+           stage, yc_home, yc_away, rc_home, rc_away,
+           exp_corners_home, exp_corners_away, exp_shots_home, exp_shots_away,
+           exp_shots_on_target_home, exp_shots_on_target_away,
+           sim_corners_home, sim_corners_away, sim_shots_home, sim_shots_away,
+           sim_shots_on_target_home, sim_shots_on_target_away
     FROM group_stage_simulations
     ORDER BY match_number ASC
     """)
@@ -90,7 +94,19 @@ def generate_html():
             "yc_home": row[26],
             "yc_away": row[27],
             "rc_home": row[28],
-            "rc_away": row[29]
+            "rc_away": row[29],
+            "exp_corners_home": row[30],
+            "exp_corners_away": row[31],
+            "exp_shots_home": row[32],
+            "exp_shots_away": row[33],
+            "exp_shots_on_target_home": row[34],
+            "exp_shots_on_target_away": row[35],
+            "sim_corners_home": row[36],
+            "sim_corners_away": row[37],
+            "sim_shots_home": row[38],
+            "sim_shots_away": row[39],
+            "sim_shots_on_target_home": row[40],
+            "sim_shots_on_target_away": row[41]
         })
         
     conn.close()
@@ -1164,6 +1180,21 @@ def generate_html():
                                 <span id="matchupStatValB_1">0.0</span>
                             </div>
                             <div class="metric-matchup-row">
+                                <span id="matchupStatValA_4">0.0</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Escanteios Esperados</span>
+                                <span id="matchupStatValB_4">0.0</span>
+                            </div>
+                            <div class="metric-matchup-row">
+                                <span id="matchupStatValA_5">0.0</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Chutes Esperados</span>
+                                <span id="matchupStatValB_5">0.0</span>
+                            </div>
+                            <div class="metric-matchup-row">
+                                <span id="matchupStatValA_6">0.0</span>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Chutes no Alvo Esperados</span>
+                                <span id="matchupStatValB_6">0.0</span>
+                            </div>
+                            <div class="metric-matchup-row">
                                 <span id="matchupStatValA_2">0%</span>
                                 <span style="color: var(--text-muted); font-size: 0.85rem;">Ambas Marcam (BTTS)</span>
                                 <span id="matchupStatValB_2">Sim</span>
@@ -1370,6 +1401,14 @@ def generate_html():
             return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial;
         }}
 
+        function dixonColesCorrection(x, y, lambdaA, lambdaB, rho = -0.10) {{
+            if (x === 0 && y === 0) return Math.max(0.0, 1.0 - lambdaA * lambdaB * rho);
+            if (x === 0 && y === 1) return Math.max(0.0, 1.0 + lambdaA * rho);
+            if (x === 1 && y === 0) return Math.max(0.0, 1.0 + lambdaB * rho);
+            if (x === 1 && y === 1) return Math.max(0.0, 1.0 - rho);
+            return 1.0;
+        }}
+
         // Run Poisson Match Simulation
         function simulateMatch() {{
             const teamA = teamASelect.value;
@@ -1383,8 +1422,13 @@ def generate_html():
             const statsA = dbData[teamA].summary;
             const statsB = dbData[teamB].summary;
             
-            const lambdaA = (statsA.attack_strength * statsB.defense_strength) / avgDefense;
-            const lambdaB = (statsB.attack_strength * statsA.defense_strength) / avgDefense;
+            let hostAdvA = 1.0;
+            let hostAdvB = 1.0;
+            if (["Mexico", "Canada", "United States"].includes(teamA)) hostAdvA = 1.10;
+            if (["Mexico", "Canada", "United States"].includes(teamB)) hostAdvB = 1.10;
+            
+            const lambdaA = ((statsA.attack_strength * statsB.defense_strength) / avgDefense) * hostAdvA / hostAdvB;
+            const lambdaB = ((statsB.attack_strength * statsA.defense_strength) / avgDefense) * hostAdvB / hostAdvA;
             
             let winA = 0, winB = 0, draw = 0;
             let over1_5 = 0, over2_5 = 0, btts = 0;
@@ -1395,7 +1439,7 @@ def generate_html():
                 const probX = poissonProbability(x, lambdaA);
                 for (let y = 0; y < 10; y++) {{
                     const probY = poissonProbability(y, lambdaB);
-                    const probXY = probX * probY;
+                    const probXY = probX * probY * dixonColesCorrection(x, y, lambdaA, lambdaB);
                     
                     if (x > y) winA += probXY;
                     else if (x < y) winB += probXY;
@@ -1413,9 +1457,14 @@ def generate_html():
             }}
             
             const sumP = winA + winB + draw;
-            winA /= sumP;
-            winB /= sumP;
-            draw /= sumP;
+            if (sumP > 0) {{
+                winA /= sumP;
+                winB /= sumP;
+                draw /= sumP;
+                over1_5 /= sumP;
+                over2_5 /= sumP;
+                btts /= sumP;
+            }}
             
             const labelA = document.getElementById('labelTeamA');
             const labelB = document.getElementById('labelTeamB');
@@ -1447,11 +1496,24 @@ def generate_html():
             document.getElementById('matchupStatValA_1').innerText = lambdaA.toFixed(2) + " xG";
             document.getElementById('matchupStatValB_1').innerText = lambdaB.toFixed(2) + " xG";
             
+            // Corners & Shots
+            const expCornersA = ((5.0 * (statsA.attack_strength * statsB.defense_strength)) / avgDefense) * hostAdvA / hostAdvB;
+            const expCornersB = ((4.5 * (statsB.attack_strength * statsA.defense_strength)) / avgDefense) * hostAdvB / hostAdvA;
+            const expShotsA = ((12.5 * (statsA.attack_strength * statsB.defense_strength)) / avgDefense) * hostAdvA / hostAdvB;
+            const expShotsB = ((10.5 * (statsB.attack_strength * statsA.defense_strength)) / avgDefense) * hostAdvB / hostAdvA;
+            const expSotA = ((4.5 * (statsA.attack_strength * statsB.defense_strength)) / avgDefense) * hostAdvA / hostAdvB;
+            const expSotB = ((3.8 * (statsB.attack_strength * statsA.defense_strength)) / avgDefense) * hostAdvB / hostAdvA;
+            
+            document.getElementById('matchupStatValA_4').innerText = expCornersA.toFixed(1);
+            document.getElementById('matchupStatValB_4').innerText = expCornersB.toFixed(1);
+            document.getElementById('matchupStatValA_5').innerText = expShotsA.toFixed(1);
+            document.getElementById('matchupStatValB_5').innerText = expShotsB.toFixed(1);
+            document.getElementById('matchupStatValA_6').innerText = expSotA.toFixed(1);
+            document.getElementById('matchupStatValB_6').innerText = expSotB.toFixed(1);
+            
             document.getElementById('matchupStatValA_2').innerText = (btts * 100).toFixed(1) + '%';
             document.getElementById('matchupStatValA_15').innerText = (over1_5 * 100).toFixed(1) + '%';
             document.getElementById('matchupStatValA_3').innerText = (over2_5 * 100).toFixed(1) + '%';
-            
-            simResultsCard.style.display = 'block';
             
             simResultsCard.style.display = 'block';
         }}
@@ -1560,6 +1622,10 @@ def generate_html():
                                 <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">
                                     🟨 ${{match.yc_home}} - ${{match.yc_away}} 🟨 ${{ (match.rc_home > 0 || match.rc_away > 0) ? ' | 🟥 ' + match.rc_home + ' - ' + match.rc_away + ' 🟥' : '' }}
                                 </div>
+                                <div style="text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.4rem; display: flex; justify-content: center; gap: 0.8rem; background: rgba(255,255,255,0.02); padding: 0.2rem 0; border-radius: 6px;">
+                                    <span>🚩 Escanteios: <strong>${{match.sim_corners_home}} - ${{match.sim_corners_away}}</strong> <span style="font-size:0.65rem; opacity:0.75;">(${{match.exp_corners_home.toFixed(1)}} - ${{match.exp_corners_away.toFixed(1)}})</span></span>
+                                    <span>🎯 Finalizações (Alvo): <strong>${{match.sim_shots_home}} (${{match.sim_shots_on_target_home}}) - ${{match.sim_shots_away}} (${{match.sim_shots_on_target_away}})</strong></span>
+                                </div>
                                 ${{realResultHtml}}
 
                                 <div class="match-item-footer-stats">
@@ -1634,6 +1700,10 @@ def generate_html():
                                 </div>
                                 <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">
                                     🟨 ${{match.yc_home}} - ${{match.yc_away}} 🟨 ${{ (match.rc_home > 0 || match.rc_away > 0) ? ' | 🟥 ' + match.rc_home + ' - ' + match.rc_away + ' 🟥' : '' }}
+                                </div>
+                                <div style="text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.4rem; display: flex; justify-content: center; gap: 0.8rem; background: rgba(255,255,255,0.02); padding: 0.2rem 0; border-radius: 6px;">
+                                    <span>🚩 Escanteios: <strong>${{match.sim_corners_home}} - ${{match.sim_corners_away}}</strong> <span style="font-size:0.65rem; opacity:0.75;">(${{match.exp_corners_home.toFixed(1)}} - ${{match.exp_corners_away.toFixed(1)}})</span></span>
+                                    <span>🎯 Finalizações (Alvo): <strong>${{match.sim_shots_home}} (${{match.sim_shots_on_target_home}}) - ${{match.sim_shots_away}} (${{match.sim_shots_on_target_away}})</strong></span>
                                 </div>
                                 </div>
 

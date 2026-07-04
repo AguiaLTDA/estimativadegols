@@ -198,6 +198,50 @@ def get_deterministic_cards(home_team, away_team, match_num):
     
     return home_yc, away_yc, home_rc, away_rc
 
+def dixon_coles_correction(x, y, lambda_h, lambda_a, rho=-0.10):
+    if x == 0 and y == 0:
+        return max(0.0, 1.0 - lambda_h * lambda_a * rho)
+    elif x == 0 and y == 1:
+        return max(0.0, 1.0 + lambda_h * rho)
+    elif x == 1 and y == 0:
+        return max(0.0, 1.0 + lambda_a * rho)
+    elif x == 1 and y == 1:
+        return max(0.0, 1.0 - rho)
+    else:
+        return 1.0
+
+def get_deterministic_shots_corners(home_team, away_team, match_num, exp_s_h, exp_s_a, exp_sot_h, exp_sot_a, exp_c_h, exp_c_a):
+    seed_str = f"stats_wc_2026_{match_num}_{home_team}_{away_team}"
+    seed_val = int(hashlib.md5(seed_str.encode('utf-8')).hexdigest(), 16) % 10000000
+    rng = random.Random(seed_val)
+    
+    def poisson_sample(lam):
+        if lam <= 0:
+            return 0
+        u = rng.random()
+        k = 0
+        p = math.exp(-lam)
+        s = p
+        while u > s and k < 40:
+            k += 1
+            p = p * lam / k
+            s += p
+        return k
+        
+    sim_c_h = poisson_sample(exp_c_h)
+    sim_c_a = poisson_sample(exp_c_a)
+    sim_s_h = poisson_sample(exp_s_h)
+    sim_s_a = poisson_sample(exp_s_a)
+    sim_sot_h = poisson_sample(exp_sot_h)
+    sim_sot_a = poisson_sample(exp_sot_a)
+    
+    if sim_sot_h > sim_s_h:
+        sim_sot_h = sim_s_h
+    if sim_sot_a > sim_s_a:
+        sim_sot_a = sim_s_a
+        
+    return sim_s_h, sim_s_a, sim_sot_h, sim_sot_a, sim_c_h, sim_c_a
+
 FIFA_THIRD_PLACE_ALLOCATIONS = {
     'ABCDEFGH': {79: '3H', 85: '3G', 81: '3B', 74: '3C', 82: '3A', 77: '3F', 87: '3D', 80: '3E'},
     'ABCDEFGI': {79: '3C', 85: '3G', 81: '3B', 74: '3D', 82: '3A', 77: '3F', 87: '3E', 80: '3I'},
@@ -1185,7 +1229,19 @@ def main():
         yc_home INTEGER,
         yc_away INTEGER,
         rc_home INTEGER,
-        rc_away INTEGER
+        rc_away INTEGER,
+        exp_corners_home REAL,
+        exp_corners_away REAL,
+        exp_shots_home REAL,
+        exp_shots_away REAL,
+        exp_shots_on_target_home REAL,
+        exp_shots_on_target_away REAL,
+        sim_corners_home INTEGER,
+        sim_corners_away INTEGER,
+        sim_shots_home INTEGER,
+        sim_shots_away INTEGER,
+        sim_shots_on_target_home INTEGER,
+        sim_shots_on_target_away INTEGER
     )
     """)
     
@@ -1514,10 +1570,24 @@ def main():
                 lambda_h = (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
                 lambda_a = (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
                 
+                # Expected corners, shots, and shots on target
+                exp_c_h = 5.0 * (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                exp_c_a = 4.5 * (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                exp_s_h = 12.5 * (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                exp_s_a = 10.5 * (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                exp_sot_h = 4.5 * (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                exp_sot_a = 3.8 * (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                
                 # Apply home advantage for host nations
                 if home in ["Mexico", "Canada", "United States"]:
                     lambda_h *= 1.10
                     lambda_a /= 1.10
+                    exp_c_h *= 1.10
+                    exp_c_a /= 1.10
+                    exp_s_h *= 1.10
+                    exp_s_a /= 1.10
+                    exp_sot_h *= 1.10
+                    exp_sot_a /= 1.10
                     
                 win_h, win_a, draw = 0.0, 0.0, 0.0
                 over_1_5 = 0.0
@@ -1530,7 +1600,7 @@ def main():
                     probX = poisson_probability(x, lambda_h)
                     for y in range(10):
                         probY = poisson_probability(y, lambda_a)
-                        probXY = probX * probY
+                        probXY = probX * probY * dixon_coles_correction(x, y, lambda_h, lambda_a)
                         
                         if x > y:
                             win_h += probXY
@@ -1552,9 +1622,13 @@ def main():
                             
                 # Normalize probabilities
                 sum_prob = win_h + win_a + draw
-                win_h /= sum_prob
-                win_a /= sum_prob
-                draw /= sum_prob
+                if sum_prob > 0:
+                    win_h /= sum_prob
+                    win_a /= sum_prob
+                    draw /= sum_prob
+                    over_1_5 /= sum_prob
+                    over_2_5 /= sum_prob
+                    btts /= sum_prob
                 
                 is_alert = 1 if over_2_5 >= 0.70 else 0
                 is_alert_1_5 = 1 if over_1_5 >= 0.85 else 0
@@ -1581,6 +1655,11 @@ def main():
                 
                 # Generate cards
                 home_yc, away_yc, home_rc, away_rc = get_deterministic_cards(home, away, match_num)
+                
+                # Generate shots and corners
+                sim_s_h, sim_s_a, sim_sot_h, sim_sot_a, sim_c_h, sim_c_a = get_deterministic_shots_corners(
+                    home, away, match_num, exp_s_h, exp_s_a, exp_sot_h, exp_sot_a, exp_c_h, exp_c_a
+                )
                 
                 sim_record = {
                     "match_number": match_num,
@@ -1612,7 +1691,19 @@ def main():
                     "yc_home": home_yc,
                     "yc_away": away_yc,
                     "rc_home": home_rc,
-                    "rc_away": away_rc
+                    "rc_away": away_rc,
+                    "exp_corners_home": round(exp_c_h, 2),
+                    "exp_corners_away": round(exp_c_a, 2),
+                    "exp_shots_home": round(exp_s_h, 2),
+                    "exp_shots_away": round(exp_s_a, 2),
+                    "exp_shots_on_target_home": round(exp_sot_h, 2),
+                    "exp_shots_on_target_away": round(exp_sot_a, 2),
+                    "sim_corners_home": sim_c_h,
+                    "sim_corners_away": sim_c_a,
+                    "sim_shots_home": sim_s_h,
+                    "sim_shots_away": sim_s_a,
+                    "sim_shots_on_target_home": sim_sot_h,
+                    "sim_shots_on_target_away": sim_sot_a
                 }
                 group_simulations.append(sim_record)
                 
@@ -1624,15 +1715,23 @@ def main():
                     prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
                     is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
                     gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert,
-                    yc_home, yc_away, rc_home, rc_away
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    yc_home, yc_away, rc_home, rc_away,
+                    exp_corners_home, exp_corners_away, exp_shots_home, exp_shots_away,
+                    exp_shots_on_target_home, exp_shots_on_target_away,
+                    sim_corners_home, sim_corners_away, sim_shots_home, sim_shots_away,
+                    sim_shots_on_target_home, sim_shots_on_target_away
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     match_num, date_str, group_name, "group-stage", home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
                     round(over_1_5, 3), round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], 
                     is_alert_1_5, is_alert, real_h, real_a, kickoff_utc,
                     round(gas_h, 2), round(gas_a, 2), gas_desc_h, gas_desc_a, is_gas_alert,
-                    home_yc, away_yc, home_rc, away_rc
+                    home_yc, away_yc, home_rc, away_rc,
+                    round(exp_c_h, 2), round(exp_c_a, 2), round(exp_s_h, 2), round(exp_s_a, 2),
+                    round(exp_sot_h, 2), round(exp_sot_a, 2),
+                    sim_c_h, sim_c_a, sim_s_h, sim_s_a,
+                    sim_sot_h, sim_sot_a
                 ))
                 
     # 7.2 Calculate group standings & allocate 3rd places
@@ -1680,10 +1779,24 @@ def main():
                 lambda_h = (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
                 lambda_a = (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
                 
+                # Expected corners, shots, and shots on target
+                exp_c_h = 5.0 * (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                exp_c_a = 4.5 * (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                exp_s_h = 12.5 * (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                exp_s_a = 10.5 * (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                exp_sot_h = 4.5 * (stats_h["attack_strength"] * stats_a["defense_strength"]) / avg_defense
+                exp_sot_a = 3.8 * (stats_a["attack_strength"] * stats_h["defense_strength"]) / avg_defense
+                
                 # Apply home advantage for host nations
                 if home in ["Mexico", "Canada", "United States"]:
                     lambda_h *= 1.10
                     lambda_a /= 1.10
+                    exp_c_h *= 1.10
+                    exp_c_a /= 1.10
+                    exp_s_h *= 1.10
+                    exp_s_a /= 1.10
+                    exp_sot_h *= 1.10
+                    exp_sot_a /= 1.10
                     
                 win_h, win_a, draw = 0.0, 0.0, 0.0
                 over_1_5 = 0.0
@@ -1696,7 +1809,7 @@ def main():
                     probX = poisson_probability(x, lambda_h)
                     for y in range(10):
                         probY = poisson_probability(y, lambda_a)
-                        probXY = probX * probY
+                        probXY = probX * probY * dixon_coles_correction(x, y, lambda_h, lambda_a)
                         
                         if x > y:
                             win_h += probXY
@@ -1718,9 +1831,13 @@ def main():
                             
                 # Normalize probabilities
                 sum_prob = win_h + win_a + draw
-                win_h /= sum_prob
-                win_a /= sum_prob
-                draw /= sum_prob
+                if sum_prob > 0:
+                    win_h /= sum_prob
+                    win_a /= sum_prob
+                    draw /= sum_prob
+                    over_1_5 /= sum_prob
+                    over_2_5 /= sum_prob
+                    btts /= sum_prob
                 
                 is_alert = 1 if over_2_5 >= 0.70 else 0
                 is_alert_1_5 = 1 if over_1_5 >= 0.85 else 0
@@ -1763,6 +1880,11 @@ def main():
                 # Generate cards
                 home_yc, away_yc, home_rc, away_rc = get_deterministic_cards(home, away, match_num)
                 
+                # Generate shots and corners
+                sim_s_h, sim_s_a, sim_sot_h, sim_sot_a, sim_c_h, sim_c_a = get_deterministic_shots_corners(
+                    home, away, match_num, exp_s_h, exp_s_a, exp_sot_h, exp_sot_a, exp_c_h, exp_c_a
+                )
+                
                 # GAS is not defined for knockout stage
                 gas_h, gas_desc_h = 0.0, "Mata-mata"
                 gas_a, gas_desc_a = 0.0, "Mata-mata"
@@ -1798,7 +1920,19 @@ def main():
                     "yc_home": home_yc,
                     "yc_away": away_yc,
                     "rc_home": home_rc,
-                    "rc_away": away_rc
+                    "rc_away": away_rc,
+                    "exp_corners_home": round(exp_c_h, 2),
+                    "exp_corners_away": round(exp_c_a, 2),
+                    "exp_shots_home": round(exp_s_h, 2),
+                    "exp_shots_away": round(exp_s_a, 2),
+                    "exp_shots_on_target_home": round(exp_sot_h, 2),
+                    "exp_shots_on_target_away": round(exp_sot_a, 2),
+                    "sim_corners_home": sim_c_h,
+                    "sim_corners_away": sim_c_a,
+                    "sim_shots_home": sim_s_h,
+                    "sim_shots_away": sim_s_a,
+                    "sim_shots_on_target_home": sim_sot_h,
+                    "sim_shots_on_target_away": sim_sot_a
                 }
                 group_simulations.append(sim_record)
                 
@@ -1810,15 +1944,23 @@ def main():
                     prob_over_1_5, prob_over_2_5, prob_btts, predicted_score_home, predicted_score_away, 
                     is_over_1_5_alert, is_over_2_5_alert, real_goals_home, real_goals_away, kickoff_utc,
                     gas_home, gas_away, gas_desc_home, gas_desc_away, is_gas_alert,
-                    yc_home, yc_away, rc_home, rc_away
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    yc_home, yc_away, rc_home, rc_away,
+                    exp_corners_home, exp_corners_away, exp_shots_home, exp_shots_away,
+                    exp_shots_on_target_home, exp_shots_on_target_away,
+                    sim_corners_home, sim_corners_away, sim_shots_home, sim_shots_away,
+                    sim_shots_on_target_home, sim_shots_on_target_away
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     match_num, date_str, "", stage, home, away,
                     round(lambda_h, 2), round(lambda_a, 2), round(win_h, 3), round(draw, 3), round(win_a, 3),
                     round(over_1_5, 3), round(over_2_5, 3), round(btts, 3), best_score[0], best_score[1], 
                     is_alert_1_5, is_alert, real_h, real_a, kickoff_utc,
                     round(gas_h, 2), round(gas_a, 2), gas_desc_h, gas_desc_a, is_gas_alert,
-                    home_yc, away_yc, home_rc, away_rc
+                    home_yc, away_yc, home_rc, away_rc,
+                    round(exp_c_h, 2), round(exp_c_a, 2), round(exp_s_h, 2), round(exp_s_a, 2),
+                    round(exp_sot_h, 2), round(exp_sot_a, 2),
+                    sim_c_h, sim_c_a, sim_s_h, sim_s_a,
+                    sim_sot_h, sim_sot_a
                 ))
                 
     # Update teams_summary gas and status fields based on final outcomes
