@@ -187,7 +187,7 @@
     "red_cards": 0,
     "card_behavior": "comportado",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nas Quartas"
+    "gas_desc_next_match": "Eliminado nas Oitavas"
   },
   {
     "team": "Croatia",
@@ -814,7 +814,7 @@
     "red_cards": 0,
     "card_behavior": "rebelde",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "Eliminado nas Oitavas"
+    "gas_desc_next_match": "Eliminado nas Quartas"
   },
   {
     "team": "Tunisia",
