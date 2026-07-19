@@ -320,7 +320,7 @@
     "red_cards": 0,
     "card_behavior": "neutro",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "4º Colocado"
+    "gas_desc_next_match": "3º Colocado"
   },
   {
     "team": "France",
@@ -339,7 +339,7 @@
     "red_cards": 0,
     "card_behavior": "rebelde",
     "gas_next_match": 0.0,
-    "gas_desc_next_match": "3º Colocado"
+    "gas_desc_next_match": "4º Colocado"
   },
   {
     "team": "Germany",
